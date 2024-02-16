@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
       
 jobs:
-  build:
+  setting_up_Default_manual_workflow_with_inputs:
     runs-on: ubuntu-latest
     steps:
         - name: Set up Manual workflow for emojbranch
