@@ -1,4 +1,4 @@
-name: main_branch_WF
+name: emoji_branch_WF
 
 on: 
     workflow_dispatch
@@ -11,3 +11,4 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+        
