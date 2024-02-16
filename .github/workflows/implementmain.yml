@@ -1,7 +1,11 @@
 name: emoji_branch_WF
 
 on: 
-    workflow_dispatch
+    workflow_dispatch:
+        inputs:
+          envron_id:
+            description: 'Choose proper universe to deploy ["ci","cert","anon","uat","bazaar"]'
+            required: true
       
 
 
@@ -11,4 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-        
+        - name: environment_print
+          run: echo ${{github.event.inputs.envron_id}}
+    
