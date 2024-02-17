@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: environment_print
-          run: echo ${{github.event.inputs.envron_id}}
+          run: echo ${{github.event.inputs.universe}}
         - name: configure aws credentials
           uses: aws-actions/configure-aws-credentials@v4
           with:
