@@ -1,43 +1,42 @@
 name: emoji_branch_WF
 
 on: 
-    workflow_dispatch:
-                inputs:
-                  branch:
-                    description: 'Git branch name to checkout'  
-                    default: 'main' 
-                    type: choice
-                    options:
-                      - main
-                      - develop
-                      - feature/*
-                  universe:
-                    description: 'Universe to deploy'
-                    default: 'ci'
-                    type: choice
-                    options:
-                      - ci
-                      - cert
-                      - anon
-                      - uat
-                      - bazaar
-                    
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Git branch name to checkout'  
+        default: 'main' 
+        type: choice
+        options:
+          - main
+          - develop
+          - feature/*
+      universe:
+        description: 'Universe to deploy'
+        default: 'ci'
+        type: choice
+        options:
+          - ci
+          - cert
+          - anon
+          - uat
+          - bazaar
                       
-                  # api_key:
-                  #   description: 'API Key value'
-                  #   type: password
-                  #   required: true
-                    
-                  # access_token:
-                  #   description: 'Access Token value' 
-                  #   type: password
-                  #   required: true
-                    
-                  # datadog_key:
-                  #   description: 'Datadog Key value'
-                  #   type: password
-                  #   required: true
-            
+      # api_key:
+      #   description: 'API Key value'
+      #   type: password
+      #   required: true
+        
+      # access_token:
+      #   description: 'Access Token value' 
+      #   type: password
+      #   required: true
+        
+      # datadog_key:
+      #   description: 'Datadog Key value'
+      #   type: password
+      #   required: true
+  
 
 
 
