@@ -2,19 +2,60 @@ name: emoji_branch_WF
 
 on: 
     workflow_dispatch:
-        inputs:
-          envron_id:
-            description: 'Choose proper universe to deploy ["ci","cert","anon","uat","bazaar"]'
-            required: true
-      
+                inputs:
+                  branch:
+                    description: 'Git branch name to checkout'  
+                    default: 'main' 
+                    type: choice
+                    options:
+                      - main
+                      - develop
+                      - feature/*
+                  universe:
+                    description: 'Universe to deploy'
+                    default: 'ci'
+                    type: choice
+                    options:
+                      - ci
+                      - cert
+                      - anon
+                      - uat
+                      - bazaar
+                    
+                      
+                  # api_key:
+                  #   description: 'API Key value'
+                  #   type: password
+                  #   required: true
+                    
+                  # access_token:
+                  #   description: 'Access Token value' 
+                  #   type: password
+                  #   required: true
+                    
+                  # datadog_key:
+                  #   description: 'Datadog Key value'
+                  #   type: password
+                  #   required: true
+            
 
+
+
+env:
+  AWS_REGION: ap-south-1
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  build:
-
+  connecting_aws:
     runs-on: ubuntu-latest
-
     steps:
         - name: environment_print
           run: echo ${{github.event.inputs.envron_id}}
-    
+        - name: configure aws credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            role-to-assume: arn:aws:iam::549050352176:role/emojigitrole
+            role-session-name: samplerolesession
+            aws-region: ${{ env.AWS_REGION }}
