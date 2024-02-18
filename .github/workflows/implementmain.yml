@@ -38,16 +38,20 @@ on:
       #   required: true
   
 
-
-
 env:
-  AWS_REGION: ap-south-1
+    # ENVIRONMENT_TAG: ${{fromJson(needs.label-discovery.outputs.vpc-data)[github.event.inputs.universe]}}
+    STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
+    AWS_REGION: ap-south-1
+    TEAM: emodb-dev@bazaarvoice.com
+    SERVICE: emoji
+    DATATYPE: client+personal
+  
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  connecting_aws:
+  retrieve_stk_info:
     runs-on: ubuntu-latest
     steps:
         - name: environment_print
