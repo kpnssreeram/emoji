@@ -41,7 +41,7 @@ on:
 env:
     # ENVIRONMENT_TAG: ${{fromJson(needs.label-discovery.outputs.vpc-data)[github.event.inputs.universe]}}
     STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
-    AWS_REGION: ap-south-1
+    AWS_REGION: us-east-1
     TEAM: emodb-dev@bazaarvoice.com
     SERVICE: emoji
     DATATYPE: client+personal
@@ -56,9 +56,17 @@ jobs:
     steps:
         - name: environment_print
           run: echo ${{github.event.inputs.universe}}
+        - name: branch_print
+          run: echo ${{github.event.inputs.branch}}
         - name: configure aws credentials
           uses: aws-actions/configure-aws-credentials@v4
           with:
             role-to-assume: arn:aws:iam::549050352176:role/emojigitrole
             role-session-name: samplerolesession
             aws-region: ${{ env.AWS_REGION }}
+        - name: retrieve stack info
+          id: stk_info
+          run: aws cloudformation describe-stacks \
+                --stack-name ${STACK_NAME}  \
+                --region ${{ env.AWS_REGION }}
+          
