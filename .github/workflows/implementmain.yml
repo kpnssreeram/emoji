@@ -22,29 +22,30 @@ on:
           - uat
           - bazaar
                       
-      # api_key:
-      #   description: 'API Key value'
-      #   type: password
-      #   required: true
+      ApiKey:
+        description: 'API Key value'
+        type: string
+        required: true
         
-      # access_token:
-      #   description: 'Access Token value' 
-      #   type: password
-      #   required: true
+      AccessToken:
+        description: 'Access Token value' 
+        type: string
+        required: true
         
-      # datadog_key:
-      #   description: 'Datadog Key value'
-      #   type: password
-      #   required: true
-  
+      DatadogKey:
+        description: 'Datadog Key value'
+        type: string
+        required: true
 
+
+  
 env:
-    # ENVIRONMENT_TAG: ${{fromJson(needs.label-discovery.outputs.vpc-data)[github.event.inputs.universe]}}
-    STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
-    AWS_REGION: us-east-1
-    TEAM: emodb-dev@bazaarvoice.com
-    SERVICE: emoji
-    DATATYPE: client+personal
+  # ENVIRONMENT_TAG: ${{ steps.get_vpc_data.outputs.vpc_data[github.event.inputs.universe] }}
+  STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
+  AWS_REGION: us-east-1
+  TEAM: emodb-dev@bazaarvoice.com
+  SERVICE: emoji
+  DATATYPE: client+personal
   
 permissions:
   id-token: write
@@ -54,19 +55,38 @@ jobs:
   retrieve_stk_info:
     runs-on: ubuntu-latest
     steps:
-        - name: environment_print
-          run: echo ${{github.event.inputs.universe}}
-        - name: branch_print
-          run: echo ${{github.event.inputs.branch}}
-        - name: configure aws credentials
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            role-to-assume: arn:aws:iam::549050352176:role/emojigitrole
-            role-session-name: samplerolesession
-            aws-region: ${{ env.AWS_REGION }}
-        - name: retrieve stack info
-          id: stk_info
-          run: aws cloudformation describe-stacks \
-                
-                --region ${{ env.AWS_REGION }}
-          
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install jq
+      - name: environment_print
+        run: echo ${{github.event.inputs.universe}}
+      - name: branch_print
+        run: echo ${{github.event.inputs.branch}}
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::549050352176:role/emojigitrole
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy Secrets
+        run: |
+          cd ops/cfn
+          aws cloudformation deploy \
+            --stack-name ${{ env.STACK_NAME }} \
+            --template-file secrets.cfn.yml \
+            --region ${{ env.AWS_REGION }} \
+            --capabilities CAPABILITY_IAM \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              Universe=${{ github.event.inputs.universe}} \
+              AccessToken=${{github.event.inputs.AccessToken }} \
+              DatadogKey=${{ github.event.inputs.DatadogKey }} \
+              ApiKey=${{github.event.inputs.ApiKey }} \
+            --tags \
+              bv:nexus:team=${{ env.TEAM }} \
+              bv:nexus:vpc=${{ env.ENVIRONMENT_TAG }} \
+              bv:system=emodb \
+              bv:nexus:service=${{ env.SERVICE }} \
+              bv:nexus:owner=${{ env.TEAM }} \
+              bv:nexus:costcenter=${{ env.TEAM }} \
+              bv:nexus:datatype=${{ env.DATATYPE }} \
+              bv:nexus:env=${{ env.ENVIRONMENT_TAG }}
