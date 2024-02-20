@@ -78,9 +78,13 @@ jobs:
           echo "ENVIRONMENT_TAG=${{steps.vpc.outputs.vpc_id }}>>$GITHUB_ENV"
           echo "VPC ID for ${{ env.ENVIRONMENT_TAG0 }} is ${{ steps.vpc.outputs.vpc_id }}"
 
-      - name: Use ENVIRONMENT_TAG in another step
+      - name: Set and Print VPC_ID variable
         run: |
-             echo "ENVIRONMENT_TAG from environment variable: $ENVIRONMENT_TAG"
+          VPC_ID="${{ steps.vpc.outputs.vpc_id }}"
+          echo "VPC_ID=${VPC_ID}"
+          echo "VPC_ID=${VPC_ID}" >> $GITHUB_ENV
+        
+
       
 
 
