@@ -1,0 +1,9 @@
+{
+    "ci": {
+      "vpc_id": "vpc-1234abcd"
+    },
+  
+    "prod": {
+     "vpc_id": "vpc-xyz09876" 
+    }
+  }
