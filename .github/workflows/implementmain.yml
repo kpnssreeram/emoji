@@ -42,7 +42,7 @@ on:
 
 
 env:
-  ENVIRONMENT_TAG: ${{github.event.inputs.universe}}
+  ENVIRONMENT_TAG0: ${{github.event.inputs.universe}}
   STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
   AWS_REGION: us-east-1
   TEAM: emodb-dev@bazaarvoice.com
@@ -75,6 +75,7 @@ jobs:
     
       - name: Print VPC ID 
         run: |
+          echo " ENVIRONMENT_TAG = ${{steps.vpc.outputs.vpc_id }} >> $GITHUB_ENV"
           echo "VPC ID for ${{ env.ENVIRONMENT_TAG }} is ${{ steps.vpc.outputs.vpc_id }}"
       
 
@@ -87,6 +88,7 @@ jobs:
         run: |
           echo ${{github.event.inputs.branch}}\
           echo ${{env.ENVIRONMENT_TAG}}
+
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
