@@ -66,7 +66,8 @@ jobs:
 
       - name: Print VPC Data File Path
         run: | 
-            echo "Path to vpc-data.json: ${{ github.workspace }}/vpc-data.json"
+            echo "Path to vpc-data.json: ${{ github.workspace }}/vpc-data.json" \
+            cat ${{ github.workspace }}/vpc-data.json
       
       - name: Load VPC data
         id: vpc
