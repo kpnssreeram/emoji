@@ -22,20 +22,20 @@ on:
           - uat
           - bazaar
                       
-      ApiKey:
-        description: 'API Key value'
-        type: string
-        required: true
+      # ApiKey:
+      #   description: 'API Key value'
+      #   type: string
+      #   required: true
         
-      AccessToken:
-        description: 'Access Token value' 
-        type: string
-        required: true
+      # AccessToken:
+      #   description: 'Access Token value' 
+      #   type: string
+      #   required: true
         
-      DatadogKey:
-        description: 'Datadog Key value'
-        type: string
-        required: true
+      # DatadogKey:
+      #   description: 'Datadog Key value'
+      #   type: string
+      #   required: true
 
 
   
@@ -46,10 +46,13 @@ env:
   TEAM: emodb-dev@bazaarvoice.com
   SERVICE: emoji
   DATATYPE: client+personal
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   
 permissions:
   id-token: write
   contents: read
+
+  actions: read
 
 jobs:
   retrieve_stk_info:
@@ -70,7 +73,7 @@ jobs:
       - name: Deploy Secrets
         run: |
           cd ops/cfn
-          aws cloudformation deploy \
+          aws cloudformtion deploy \
             --stack-name ${{ env.STACK_NAME }} \
             --template-file secrets.cfn.yml \
             --region ${{ env.AWS_REGION }} \
@@ -90,3 +93,25 @@ jobs:
               bv:nexus:costcenter=${{ env.TEAM }} \
               bv:nexus:datatype=${{ env.DATATYPE }} \
               bv:nexus:env=${{ env.ENVIRONMENT_TAG }}
+
+  
+      - name: Send success notification
+        if: success()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}  
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: GitHub Action
+          fields: repo,message,commit,author,action
+          text: 'Build #${{ github.run_number }} succeeded'  
+          
+
+      - name: Send failure notification
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: GitHub Action
+          fields: repo,message,commit,author,action
+          text: 'Build #${{ github.run_number }} failed'
