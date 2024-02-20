@@ -21,6 +21,7 @@ on:
           - anon
           - uat
           - bazaar
+                      
       # ApiKey:
       #   description: 'API Key value'
       #   type: string
@@ -58,33 +59,25 @@ jobs:
   retrieve_stk_info:
     runs-on: ubuntu-latest
     steps:
-      - name: Git clone the repository
-        uses: actions/checkout@v4
-      
-      - name: create direc
-        run: ls -R
-
-      - name: Print VPC Data File Path
-        run: | 
-            echo "Path to vpc-data.json: ${{ github.workspace }}/vpc-data.json" \
-            cat ${{ github.workspace }}/vpc-data.json
-      
       - name: Load VPC data
         id: vpc
         uses: actions/github-script@v5
+        env:
+          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG }}
         with:
           script: |
-            const fs = require('fs');
-            const vpcDataPath = '/home/runner/work/emoji/emoji/vpc-data.json';  // Adjust the path if needed
-            const vpcData = JSON.parse(fs.readFileSync(vpcDataPath, 'utf8'));
+            const vpcData = {
+              "ci": {"vpc_id": "ci-vpc-id"},
+              "cert": {"vpc_id": "cert-vpc-id"},
+              // Add other environments as needed
+            };
             core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
-      
-      - name: Deploy application
-        env:
-          VPC_ID: ${{ steps.vpc.outputs.vpc_id }}
-          
+    
+      - name: Print VPC ID 
         run: |
-          echo "Deploying to VPC ${VPC_ID} in account "
+          echo "VPC ID for ${{ env.ENVIRONMENT_TAG }} is ${{ steps.vpc.outputs.vpc_id }}"
+      
+
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install jq
