@@ -21,28 +21,35 @@ on:
           - anon
           - uat
           - bazaar
+      aws_environment:
+        description: 'Which environment to deploy'
+        default: 'qa'
+        type: choice
+        options:
+          - prod
+      
                       
-      # ApiKey:
-      #   description: 'API Key value'
-      #   type: string
-      #   required: true
+      ApiKey:
+        description: 'API Key value'
+        type: string
+        required: true
         
-      # AccessToken:
-      #   description: 'Access Token value' 
-      #   type: string
-      #   required: true
+      AccessToken:
+        description: 'Access Token value' 
+        type: string
+        required: true
         
       # DatadogKey:
       #   description: 'Datadog Key value'
       #   type: string
       #   required: true
-      # AccessToken=${{github.event.inputs.AccessToken }} \
-      # DatadogKey=${{ github.event.inputs.DatadogKey }} \
-      # ApiKey=${{github.event.inputs.ApiKey }} \
+      
+      # DatadogKey=${{ github.event.inputs.DatadogKey }} \  need to add in deploy section
 
 
 env:
-  ENVIRONMENT_TAG: ${{github.event.inputs.universe}}
+  # ENVIRONMENT_TAG: ${{github.event.inputs.universe}}  Do it later
+  AWS_ENVIRONMENT: ${{ github.event.inputs.aws_environment}}
   STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
   AWS_REGION: us-east-1
   TEAM: emodb-dev@bazaarvoice.com
@@ -63,53 +70,55 @@ jobs:
     #   fail-fast: false
 
     steps:
+      - uses: actions/checkout@v4
 
-      - name: Load VPC data
-        id: vpc
-        uses: actions/github-script@v5
-        env:
-          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG}}
-        with:
-          script: |
-            const vpcData = {
-              "ci": {"vpc_id": "ci-vpc-id"},
-              "cert": {"vpc_id": "cert-vpc-id"},
-              "anon": {"vpc_id": "anon-vpc-id"},
-              "uat": {"vpc_id": "uat-vpc-id"},
-              "bazaar": {"vpc_id": "bazaar-vpc-id"},
-              // Add other environments as needed
-            };
-            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+      # - name: Load VPC data
+      #   id: vpc
+      #   uses: actions/github-script@v5
+      #   env:
+      #     ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG}}
+      #   with:
+      #     script: |
+      #       const vpcData = {
+      #         "ci": {"vpc_id": "ci-vpc-id"},
+      #         "cert": {"vpc_id": "cert-vpc-id"},
+      #         "anon": {"vpc_id": "anon-vpc-id"},
+      #         "uat": {"vpc_id": "uat-vpc-id"},
+      #         "bazaar": {"vpc_id": "bazaar-vpc-id"},
+      #         // Add other environments as needed
+      #       };
+      #       core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
 
-      - name: Load Account Data
+      - name: Load Env Account Id
         id: accountid
         uses: actions/github-script@v5
         env:
-          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG}}
+          AWS_ENVIRONMENT: ${{ env.AWS_ENVIRONMENT}}
         with:
-          script: |
-            const accId = {
-              "ci": {"acc_id": "549050352176"},
-              "cert": {"acc_id": "cert-acc-id"},
-              "anon": {"acc_id": "anon-acc-id"},
-              "uat": {"acc_id": "uat-acc-id"},
-              "bazaar": {"acc_id": "bazaar-acc-id"},
-              // Add other environments as needed
-            };
-            core.setOutput('acc_id', accId[process.env.ENVIRONMENT_TAG].acc_id)
+            script: |
+              const awsenv = {
+                "qa": {"env_acc_id": "549050352176"},
+                "prod": {"env_acc_id": "468552248569"},
+                // Add other environments as needed
+              };
+              core.setOutput('env_acc_id', awsenv[process.env.AWS_ENVIRONMENT].env_acc_id)
       
         
-      - name: environment_print
+      - name: universe_print
         run: echo ${{github.event.inputs.universe}}
 
       - name: branch_print
         run: |
           echo ${{github.event.inputs.branch}}
 
+      - name: aws_environment_print
+        run: |
+          echo ${{github.event.inputs.aws_environment}}
+
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{steps.accountid.outputs.acc_id}}:role/emojigitrole
+          role-to-assume: arn:aws:iam::${{steps.accountid.outputs.env_acc_id}}:role/emojigitrole
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
 
@@ -124,10 +133,12 @@ jobs:
             --no-fail-on-empty-changeset \
             --parameter-overrides \
               Universe=${{ github.event.inputs.universe}} \
+              AccessToken=${{github.event.inputs.AccessToken }} \
+              ApiKey=${{github.event.inputs.ApiKey }} \
               
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
-              bv:nexus:vpc=${{ steps.vpc.outputs.vpc_id }}  \
+              bv:nexus:vpc=${{ steps.vpc.outputs.vpc_id }}  \ 
               bv:system=emodb \
               bv:nexus:service=${{ env.SERVICE }} \
               bv:nexus:owner=${{ env.TEAM }} \
@@ -136,6 +147,15 @@ jobs:
               bv:nexus:env=${{ steps.vpc.outputs.vpc_id  }}
 
   
+
+
+
+
+
+
+
+
+
       # - name: Send success notification
       #   if: success()
       #   env:
