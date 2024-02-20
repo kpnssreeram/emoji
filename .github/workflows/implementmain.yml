@@ -106,7 +106,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{steps.accountid.outputs.acc_id}}.vpc_id:role/emojigitrole
+          role-to-assume: arn:aws:iam::${{steps.accountid.outputs.acc_id}}:role/emojigitrole
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
 
