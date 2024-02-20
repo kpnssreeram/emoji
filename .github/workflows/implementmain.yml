@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Load VPC data
         id: vpc
-        uses: actions/github-script@v6
+        uses: actions/github-script@v5
         env:
           ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG }}
         with:
