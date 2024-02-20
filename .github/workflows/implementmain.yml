@@ -63,13 +63,18 @@ jobs:
         uses: actions/checkout@v4
       - name: Load VPC data
         id: vpc
-        uses: actions/github-script@v6
+        uses: actions/github-script@v5
         env:
           ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG }}
         with:
           script: |
-            const vpcData = require('./vpc-data.json')
+            const vpcData = {
+              "ci": {"vpc_id": "ci-vpc-id"},
+              "cert": {"vpc_id": "cert-vpc-id"},
+              // Add other environments as needed
+            };
             core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+      
 
       - name: Print VPC ID 
         env:
