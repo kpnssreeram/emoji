@@ -41,9 +41,7 @@ on:
       # ApiKey=${{github.event.inputs.ApiKey }} \
 
 
-  
 env:
-  # ENVIRONMENT_TAG: ${{ steps.get_vpc_data.outputs.vpc_data[github.event.inputs.universe] }}
   STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
   AWS_REGION: us-east-1
   TEAM: emodb-dev@bazaarvoice.com
@@ -60,6 +58,24 @@ jobs:
   retrieve_stk_info:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Load VPC data
+        id: vpc
+        uses: actions/github-script@v6
+        env:
+          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG }}
+        with:
+          script: |
+            const vpcData = require('./vpc-data.json')
+            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+
+      - name: Print VPC ID 
+        env:
+          VPC_ID: ${{ steps.env.outputs.vpc_id }}
+        run: |
+          echo "VPC ID for ${{ env.ENVIRONMENT_TAG}} is ${VPC_ID}"
+
+
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install jq
       - name: environment_print
@@ -75,7 +91,7 @@ jobs:
       - name: Deploy Secrets
         run: |
           cd ops/cfn
-          aws cloudformation deploy \
+          aws cloudformtion deploy \
             --stack-name ${{ env.STACK_NAME }} \
             --template-file secrets.cfn.yml \
             --region ${{ env.AWS_REGION }} \
