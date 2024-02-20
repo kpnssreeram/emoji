@@ -76,7 +76,7 @@ jobs:
       - name: Print VPC ID 
         run: |
           echo " ENVIRONMENT_TAG = ${{steps.vpc.outputs.vpc_id }} >> $GITHUB_ENV"
-          echo "VPC ID for ${{ env.ENVIRONMENT_TAG }} is ${{ steps.vpc.outputs.vpc_id }}"
+          echo "VPC ID for ${{ env.ENVIRONMENT_TAG0 }} is ${{ steps.vpc.outputs.vpc_id }}"
       
 
 
@@ -86,8 +86,7 @@ jobs:
         run: echo ${{github.event.inputs.universe}}
       - name: branch_print
         run: |
-          echo ${{github.event.inputs.branch}}\
-          echo ${{env.ENVIRONMENT_TAG}}
+          echo ${{github.event.inputs.branch}}
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -109,13 +108,13 @@ jobs:
               
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
-              bv:nexus:vpc=${{ env.ENVIRONMENT_TAG }} \
+              bv:nexus:vpc= $ENVIRONMENT_TAG  \
               bv:system=emodb \
               bv:nexus:service=${{ env.SERVICE }} \
               bv:nexus:owner=${{ env.TEAM }} \
               bv:nexus:costcenter=${{ env.TEAM }} \
               bv:nexus:datatype=${{ env.DATATYPE }} \
-              bv:nexus:env=${{ env.ENVIRONMENT_TAG }}
+              bv:nexus:env=$ENVIRONMENT_TAG
 
   
       # - name: Send success notification
