@@ -42,7 +42,7 @@ on:
 
 
 env:
-  ENVIRONMENT_TAG0: ${{github.event.inputs.universe}}
+  ENVIRONMENT_TAG: ${{github.event.inputs.universe}}
   STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
   AWS_REGION: us-east-1
   TEAM: emodb-dev@bazaarvoice.com
@@ -63,30 +63,22 @@ jobs:
         id: vpc
         uses: actions/github-script@v5
         env:
-          ENVIRONMENT_TAG0: ${{ env.ENVIRONMENT_TAG0 }}
+          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG}}
         with:
           script: |
             const vpcData = {
               "ci": {"vpc_id": "ci-vpc-id"},
               "cert": {"vpc_id": "cert-vpc-id"},
+              "anon": {"vpc_id": "anon-vpc-id"},
+              "uat": {"vpc_id": "uat-vpc-id"},
+              "bazaar": {"vpc_id": "bazaar-vpc-id"},
               // Add other environments as needed
             };
-            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG0].vpc_id)
-       
-    
-      - name: Print VPC ID 
-        env:
-          ENVIRONMENT_TAG: ${{ steps.vpc.outputs.vpc_id  }}
-        run: |
-          echo "VPC ID for ${{ env.ENVIRONMENT_TAG0 }} is ${{ steps.vpc.outputs.vpc_id }}"
-
+            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
       
-
-
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install jq
       - name: environment_print
         run: echo ${{github.event.inputs.universe}}
+
       - name: branch_print
         run: |
           echo ${{github.event.inputs.branch}}
@@ -97,6 +89,7 @@ jobs:
           role-to-assume: arn:aws:iam::549050352176:role/emojigitrole
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
+
       - name: Deploy Secrets
         run: |
           cd ops/cfn
@@ -111,13 +104,13 @@ jobs:
               
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
-              bv:nexus:vpc= ${{ env.ENVIRONMENT_TAG }}  \
+              bv:nexus:vpc= ${{ steps.vpc.outputs.vpc_id }}  \
               bv:system=emodb \
               bv:nexus:service=${{ env.SERVICE }} \
               bv:nexus:owner=${{ env.TEAM }} \
               bv:nexus:costcenter=${{ env.TEAM }} \
               bv:nexus:datatype=${{ env.DATATYPE }} \
-              bv:nexus:env=${{ env.ENVIRONMENT_TAG }}
+              bv:nexus:env=${{ steps.vpc.outputs.vpc_id  }}
 
   
       # - name: Send success notification
