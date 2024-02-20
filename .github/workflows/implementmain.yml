@@ -63,7 +63,7 @@ jobs:
         id: vpc
         uses: actions/github-script@v5
         env:
-          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG }}
+          ENVIRONMENT_TAG0: ${{ env.ENVIRONMENT_TAG0 }}
         with:
           script: |
             const vpcData = {
