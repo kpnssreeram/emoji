@@ -36,6 +36,9 @@ on:
       #   description: 'Datadog Key value'
       #   type: string
       #   required: true
+      # AccessToken=${{github.event.inputs.AccessToken }} \
+      # DatadogKey=${{ github.event.inputs.DatadogKey }} \
+      # ApiKey=${{github.event.inputs.ApiKey }} \
 
 
   
@@ -46,12 +49,11 @@ env:
   TEAM: emodb-dev@bazaarvoice.com
   SERVICE: emoji
   DATATYPE: client+personal
-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   
 permissions:
   id-token: write
   contents: read
-
   actions: read
 
 jobs:
@@ -73,7 +75,7 @@ jobs:
       - name: Deploy Secrets
         run: |
           cd ops/cfn
-          aws cloudformtion deploy \
+          aws cloudformation deploy \
             --stack-name ${{ env.STACK_NAME }} \
             --template-file secrets.cfn.yml \
             --region ${{ env.AWS_REGION }} \
@@ -81,9 +83,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --parameter-overrides \
               Universe=${{ github.event.inputs.universe}} \
-              AccessToken=${{github.event.inputs.AccessToken }} \
-              DatadogKey=${{ github.event.inputs.DatadogKey }} \
-              ApiKey=${{github.event.inputs.ApiKey }} \
+              
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
               bv:nexus:vpc=${{ env.ENVIRONMENT_TAG }} \
@@ -95,23 +95,23 @@ jobs:
               bv:nexus:env=${{ env.ENVIRONMENT_TAG }}
 
   
-      - name: Send success notification
-        if: success()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}  
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: GitHub Action
-          fields: repo,message,commit,author,action
-          text: 'Build #${{ github.run_number }} succeeded'  
+      # - name: Send success notification
+      #   if: success()
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}  
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     author_name: GitHub Action
+      #     fields: repo,message,commit,author,action
+      #     text: 'Build #${{ github.run_number }} succeeded'  
           
 
-      - name: Send failure notification
-        if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: GitHub Action
-          fields: repo,message,commit,author,action
-          text: 'Build #${{ github.run_number }} failed'
+      # - name: Send failure notification
+      #   if: failure()
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     author_name: GitHub Action
+      #     fields: repo,message,commit,author,action
+      #     text: 'Build #${{ github.run_number }} failed'
