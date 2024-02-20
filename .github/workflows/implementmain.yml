@@ -21,6 +21,9 @@ on:
           - anon
           - uat
           - bazaar
+      vpc-data-file:
+        description: 'Path to the VPC data JSON file'
+        default: 'vpc-data.json'
                       
       # ApiKey:
       #   description: 'API Key value'
@@ -64,12 +67,15 @@ jobs:
       - name: Load VPC data
         id: vpc
         uses: actions/github-script@v5
-        env:
-          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG }}
         with:
           script: |
-            const vpcData = require('./vpc-data.json')
+            const fs = require('fs');
+            const vpcData = JSON.parse(fs.readFileSync(process.env.VPC_DATA_FILE, 'utf8'));
             core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+        env:
+          VPC_DATA_FILE: ${{ github.event.inputs.vpc-data-file }}
+      
+      
 
       - name: Print VPC ID 
         env:
