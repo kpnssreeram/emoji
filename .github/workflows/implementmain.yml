@@ -72,18 +72,13 @@ jobs:
               // Add other environments as needed
             };
             core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG0].vpc_id)
+       
     
       - name: Print VPC ID 
+        env:
+          ENVIRONMENT_TAG: ${{ steps.vpc.outputs.vpc_id  }}
         run: |
-          echo "ENVIRONMENT_TAG=${{steps.vpc.outputs.vpc_id }}>>$GITHUB_ENV"
           echo "VPC ID for ${{ env.ENVIRONMENT_TAG0 }} is ${{ steps.vpc.outputs.vpc_id }}"
-
-      - name: Set and Print VPC_ID variable
-        run: |
-          VPC_ID="${{ steps.vpc.outputs.vpc_id }}"
-          echo "VPC_ID=${VPC_ID}"
-          echo "VPC_ID=${VPC_ID}" >> $GITHUB_ENV
-        
 
       
 
@@ -116,13 +111,13 @@ jobs:
               
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
-              bv:nexus:vpc= $ENVIRONMENT_TAG  \
+              bv:nexus:vpc= ${{ env.ENVIRONMENT_TAG }}  \
               bv:system=emodb \
               bv:nexus:service=${{ env.SERVICE }} \
               bv:nexus:owner=${{ env.TEAM }} \
               bv:nexus:costcenter=${{ env.TEAM }} \
               bv:nexus:datatype=${{ env.DATATYPE }} \
-              bv:nexus:env=$ENVIRONMENT_TAG
+              bv:nexus:env=${{ env.ENVIRONMENT_TAG }}
 
   
       # - name: Send success notification
