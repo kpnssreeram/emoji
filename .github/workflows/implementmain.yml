@@ -56,9 +56,11 @@ permissions:
   actions: read
 
 jobs:
-  retrieve_stk_info:
+  secretsjenkinfile:
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Load VPC data
         id: vpc
         uses: actions/github-script@v5
@@ -75,7 +77,25 @@ jobs:
               // Add other environments as needed
             };
             core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+
+      - name: Load Account Data
+        id: accountid
+        uses: actions/github-script@v5
+        env:
+          ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG}}
+        with:
+          script: |
+            const accId = {
+              "ci": {"acc_id": "549050352176"},
+              "cert": {"acc_id": "cert-acc-id"},
+              "anon": {"acc_id": "anon-acc-id"},
+              "uat": {"acc_id": "uat-acc-id"},
+              "bazaar": {"acc_id": "bazaar-acc-id"},
+              // Add other environments as needed
+            };
+            core.setOutput('acc_id', vpcData[process.env.ENVIRONMENT_TAG].acc_id)
       
+        
       - name: environment_print
         run: echo ${{github.event.inputs.universe}}
 
@@ -86,7 +106,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::549050352176:role/emojigitrole
+          role-to-assume: arn:aws:iam::${{steps.accountid.outputs.acc_id}}.vpc_id:role/emojigitrole
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
 
