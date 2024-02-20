@@ -33,12 +33,12 @@ on:
       ApiKey:
         description: 'API Key value'
         type: string
-        required: true
+        required: false
         
       AccessToken:
         description: 'Access Token value' 
         type: string
-        required: true
+        required: false
         
       # DatadogKey:
       #   description: 'Datadog Key value'
