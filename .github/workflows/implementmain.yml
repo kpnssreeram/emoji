@@ -84,7 +84,9 @@ jobs:
       - name: environment_print
         run: echo ${{github.event.inputs.universe}}
       - name: branch_print
-        run: echo ${{github.event.inputs.branch}}
+        run: |
+          echo ${{github.event.inputs.branch}}\
+          echo ${{env.ENVIRONMENT_TAG}}
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
