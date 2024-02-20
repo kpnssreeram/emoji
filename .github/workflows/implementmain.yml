@@ -93,7 +93,7 @@ jobs:
               "bazaar": {"acc_id": "bazaar-acc-id"},
               // Add other environments as needed
             };
-            core.setOutput('acc_id', vpcData[process.env.ENVIRONMENT_TAG].acc_id)
+            core.setOutput('acc_id', accId[process.env.ENVIRONMENT_TAG].acc_id)
       
         
       - name: environment_print
