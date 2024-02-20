@@ -59,7 +59,8 @@ jobs:
   retrieve_stk_info:
     runs-on: ubuntu-latest
     steps:
-
+      - name: Git clone the repository
+        uses: actions/checkout@v4
       - name: Load VPC data
         id: vpc
         uses: actions/github-script@v6
