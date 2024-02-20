@@ -71,7 +71,7 @@ jobs:
               "cert": {"vpc_id": "cert-vpc-id"},
               // Add other environments as needed
             };
-            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG0].vpc_id)
     
       - name: Print VPC ID 
         run: |
