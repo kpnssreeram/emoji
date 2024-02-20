@@ -104,7 +104,7 @@ jobs:
               
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
-              bv:nexus:vpc= ${{ steps.vpc.outputs.vpc_id }}  \
+              bv:nexus:vpc=${{ steps.vpc.outputs.vpc_id }}  \
               bv:system=emodb \
               bv:nexus:service=${{ env.SERVICE }} \
               bv:nexus:owner=${{ env.TEAM }} \
