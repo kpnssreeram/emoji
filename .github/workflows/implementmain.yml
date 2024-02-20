@@ -60,6 +60,10 @@ jobs:
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
+      
+      - name: create direc
+        run: ls -R
+
 
       - name: Load environment data
         id: env
