@@ -64,20 +64,24 @@ jobs:
       - name: create direc
         run: ls -R
 
-
-      - name: Load environment data
-        id: env
+      - name: Print VPC Data File Path
+        run: | 
+            echo "Path to vpc-data.json: ${{ github.workspace }}/vpc-data.json"
+      
+      - name: Load VPC data
+        id: vpc
         uses: actions/github-script@v5
-        env:
-          ENVIRONMENT: ${{ env.ENVIRONMENT }}  
         with:
           script: |
-            const envData = require('./vpc-data.json')
-            core.setOutput('vpc_id', envData[process.env.ENVIRONMENT].vpc_id)
+            const fs = require('fs');
+            const vpcDataPath = './vpc-data.json';  // Adjust the path if needed
+            const vpcData = JSON.parse(fs.readFileSync(vpcDataPath, 'utf8'));
+            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+      
   
       - name: Deploy application
         env:
-          VPC_ID: ${{ steps.env.outputs.vpc_id }}
+          VPC_ID: ${{ steps.vpc.outputs.vpc_id }}
           
         run: |
           echo "Deploying to VPC ${VPC_ID} in account "
