@@ -77,10 +77,9 @@ jobs:
       
 
       - name: Print VPC ID 
-        env:
-          VPC_ID: ${{steps.vpc.outputs.result.vpc_id}}
         run: |
-          echo "VPC ID for ${{ env.ENVIRONMENT_TAG}} is ${VPC_ID}"
+            echo "VPC ID for ${{ env.ENVIRONMENT_TAG }} is ${{ steps.vpc.outputs.vpc_id }}"
+          
 
 
       - name: Install jq
