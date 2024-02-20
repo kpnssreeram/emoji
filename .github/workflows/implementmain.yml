@@ -21,10 +21,6 @@ on:
           - anon
           - uat
           - bazaar
-      vpc-data-file:
-        description: 'Path to the VPC data JSON file'
-        default: 'vpc-data.json'
-                      
       # ApiKey:
       #   description: 'API Key value'
       #   type: string
@@ -64,25 +60,23 @@ jobs:
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
-      - name: Load VPC data
-        id: vpc
+
+      - name: Load environment data
+        id: env
         uses: actions/github-script@v5
+        env:
+          ENVIRONMENT: ${{ env.ENVIRONMENT }}  
         with:
           script: |
-            const fs = require('fs');
-            const vpcData = JSON.parse(fs.readFileSync(process.env.VPC_DATA_FILE, 'utf8'));
-            core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
+            const envData = require('./env-data.json')
+            core.setOutput('vpc_id', envData[process.env.ENVIRONMENT].vpc_id)
+  
+      - name: Deploy application
         env:
-          VPC_DATA_FILE: ${{ github.event.inputs.vpc-data-file }}
-      
-      
-
-      - name: Print VPC ID 
-        env:
-          VPC_ID: ${{steps.vpc.outputs.vpc_id}}
+          VPC_ID: ${{ steps.env.outputs.vpc_id }}
+          
         run: |
-          echo "VPC ID for ${{ env.ENVIRONMENT_TAG}} is ${VPC_ID}"
-
+          echo "Deploying to VPC ${VPC_ID} in account "
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install jq
