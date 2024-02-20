@@ -42,6 +42,7 @@ on:
 
 
 env:
+  ENVIRONMENT_TAG: ${{github.event.inputs.universe}}
   STACK_NAME: ${{github.event.inputs.universe}}-emoji-secret
   AWS_REGION: us-east-1
   TEAM: emodb-dev@bazaarvoice.com
@@ -71,7 +72,7 @@ jobs:
 
       - name: Print VPC ID 
         env:
-          VPC_ID: ${{ steps.env.outputs.vpc_id }}
+          VPC_ID: ${{steps.vpc.outputs.result.vpc_id}}
         run: |
           echo "VPC ID for ${{ env.ENVIRONMENT_TAG}} is ${VPC_ID}"
 
