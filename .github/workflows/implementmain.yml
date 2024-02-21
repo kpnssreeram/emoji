@@ -125,7 +125,8 @@ jobs:
 
       - name: Deploy Secrets
         run: |
-          - ls
+          pwd
+          ls
           aws cloudfomation deploy \
             --stack-name ${{ env.STACK_NAME }} \
             --template-file secrets.cfn.yml \
