@@ -125,8 +125,8 @@ jobs:
 
       - name: Deploy Secrets
         run: |
-          cd ops/cfn
-          aws cloudformation deploy \
+          ls
+          aws cloudfomation deploy \
             --stack-name ${{ env.STACK_NAME }} \
             --template-file secrets.cfn.yml \
             --region ${{ env.AWS_REGION }} \
