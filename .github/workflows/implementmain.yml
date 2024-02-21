@@ -71,7 +71,8 @@ jobs:
     #   fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Git Checkout 
+        uses: actions/checkout@v4
 
       # - name: Load VPC data
       #   id: vpc
@@ -105,16 +106,16 @@ jobs:
               core.setOutput('env_acc_id', awsenv[process.env.AWS_ENVIRONMENT].env_acc_id)
       
         
-      - name: universe_print
-        run: echo ${{github.event.inputs.universe}}
+      # - name: universe_print
+      #   run: echo ${{github.event.inputs.universe}}
 
-      - name: branch_print
-        run: |
-          echo ${{github.event.inputs.branch}}
+      # - name: branch_print
+      #   run: |
+      #     echo ${{github.event.inputs.branch}}
 
-      - name: aws_environment_print
+      - name: All_inputs_print
         run: |
-          echo ${{github.event.inputs.aws_environment}}
+          echo ${{github.event.inputs}}
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
