@@ -1,5 +1,4 @@
 name: emoji_branch_WF
-
 on: 
   workflow_dispatch:
     inputs:
@@ -9,8 +8,8 @@ on:
         type: choice
         options:
           - main
-          - develop
-          - feature/*
+          - kpnssbranch
+          - feature
       universe:
         description: 'Universe to deploy'
         default: 'ci'
