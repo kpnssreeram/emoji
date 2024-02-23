@@ -112,9 +112,16 @@ jobs:
       #   run: |
       #     echo ${{github.event.inputs.branch}}
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install jq
+
       - name: All_inputs_print
         run: |
-          echo ${{github.event.inputs}}
+          for input in $(compgen -A variable | grep '^INPUT_'); do
+            echo "${input:6} = ${!input}"
+          done
+      
+
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
