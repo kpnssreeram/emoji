@@ -73,6 +73,12 @@ jobs:
       - name: Git Checkout 
         uses: actions/checkout@v4
 
+      - name: mask password
+        run: |
+         echo "${{ github.event.inputs.ApiKey }}" | base64 --decode | sed
+
+
+
       # - name: Load VPC data
       #   id: vpc
       #   uses: actions/github-script@v5
