@@ -77,14 +77,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install jq
 
-      - name: mask password
+      - name: mask ApiKey
         run: |
           API_PASSWORD=$(jq -r '.inputs.ApiKey' $GITHUB_EVENT_PATH)
           echo ::add-mask::$API_PASSWORD
           echo API_PASSWORD=$API_PASSWORD >> $GITHUB_ENV
-      - name: print pass
+      - name: mask AccessToken
+        run: |
+          Access_Token=$(jq -r '.inputs.AccessToken' $GITHUB_EVENT_PATH)
+          echo ::add-mask::$Access_Token
+          echo Access_Token=$Access_Token >> $GITHUB_ENV
+      - name: print masking apikey and accessToken
         run: 
-          echo ${{env.API_PASSWORD}}
+          echo "${{env.API_PASSWORD}} is api key and ${{env.Access_Token}} is access token"
 
 
       # - name: Load VPC data
@@ -142,7 +147,7 @@ jobs:
         run: |
           cd ops/cfn
           ls
-          aws cloudformtion deploy --stack-name ${{ env.STACK_NAME }} --template-file secrets.cfn.yml --region ${{ env.AWS_REGION }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset --parameter-overrides Universe=${{ github.event.inputs.Universe }} AccessToken=${{ github.event.inputs.AccessToken }} ApiKey=${{ github.event.inputs.ApiKey }} --tags bv:nexus:team=${{ env.TEAM }} bv:nexus:vpc=1233 bv:system=emodb bv:nexus:service=${{ env.SERVICE }} bv:nexus:owner=${{ env.TEAM }} bv:nexus:costcenter=${{ env.TEAM }} bv:nexus:datatype=${{ env.DATATYPE }} bv:nexus:env=1234
+          aws cloudformtion deploy --stack-name ${{ env.STACK_NAME }} --template-file secrets.cfn.yml --region ${{ env.AWS_REGION }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset --parameter-overrides Universe=${{ github.event.inputs.Universe }} AccessToken=${{env.Access_Token}} ApiKey=${{env.API_PASSWORD}} --tags bv:nexus:team=${{ env.TEAM }} bv:nexus:vpc=1233 bv:system=emodb bv:nexus:service=${{ env.SERVICE }} bv:nexus:owner=${{ env.TEAM }} bv:nexus:costcenter=${{ env.TEAM }} bv:nexus:datatype=${{ env.DATATYPE }} bv:nexus:env=1234
 
 
     
