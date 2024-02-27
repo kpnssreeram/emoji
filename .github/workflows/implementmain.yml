@@ -48,7 +48,7 @@ on:
 
 
 env:
-  # ENVIRONMENT_TAG: ${{github.event.inputs.Universe}}  Do it laters
+  # ENVIRONMENT_TAG: ${{github.event.inputs.Universe}}  Do it laterss
   AWS_ENVIRONMENT: ${{ github.event.inputs.aws_environment}}
   STACK_NAME: ${{github.event.inputs.Universe}}-emoji-secret-test
   AWS_REGION: us-east-1
