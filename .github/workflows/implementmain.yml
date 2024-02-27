@@ -72,11 +72,19 @@ jobs:
     steps:
       - name: Git Checkout 
         uses: actions/checkout@v4
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install jq
 
       - name: mask password
         run: |
-         echo "${{ github.event.inputs.ApiKey }}" | base64 --decode | sed
-
+          API_PASSWORD=$(jq -r '.inputs.ApiKey' $GITHUB_EVENT_PATH)
+          echo ::add-mask::$API_PASSWORD
+          echo API_PASSWORD=$API_PASSWORD >> $GITHUB_ENV
+      - name: print pass
+        run: 
+          echo ${{env.API_PASSWORD}}
 
 
       # - name: Load VPC data
