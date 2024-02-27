@@ -53,7 +53,7 @@ env:
   STACK_NAME: ${{github.event.inputs.Universe}}-emoji-secret-test
   AWS_REGION: us-east-1
   TEAM: emodb-dev@bazaarvoice.com
-  SERVICE: emoji
+  #SERVICE: emoji
   DATATYPE: client+personal
   # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   
@@ -87,9 +87,9 @@ jobs:
           Access_Token=$(jq -r '.inputs.AccessToken' $GITHUB_EVENT_PATH)
           echo ::add-mask::$Access_Token
           echo Access_Token=$Access_Token >> $GITHUB_ENV
-      - name: print masking apikey and accessToken
+      - name: print masking apikey and accessToken and 
         run: 
-          echo "${{env.API_PASSWORD}} is api key and ${{env.Access_Token}} is access token"
+          echo "${{env.API_PASSWORD}} is api key and ${{env.Access_Token}} is access token and global variable is ${{vars.SERVICE}}"
 
 
       # - name: Load VPC data
@@ -161,7 +161,7 @@ jobs:
             bv:nexus:team=${{ env.TEAM }} \
             bv:nexus:vpc=1233 \
             bv:system=emodb \
-            bv:nexus:service=${{ env.SERVICE }} \
+            bv:nexus:service=${{vars.SERVICE}} \
             bv:nexus:owner=${{ env.TEAM }} \
             bv:nexus:costcenter=${{ env.TEAM }} \
             bv:nexus:datatype=${{ env.DATATYPE }} \
