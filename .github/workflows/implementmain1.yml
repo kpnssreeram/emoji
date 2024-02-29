@@ -1,4 +1,4 @@
-name: emoji_branch_WF
+name: emoji_branch_WFs
 on: 
   workflow_dispatch:
     inputs:
