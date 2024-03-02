@@ -65,7 +65,7 @@ permissions:
 jobs:
   secretsjenkinfile:
     runs-on: ubuntu-latest
-    
+    environment: testenv
     # timeout-minutes: 10
     # strategy:
     #   fail-fast: false
@@ -73,6 +73,8 @@ jobs:
     steps:
       - name: Git Checkout 
         uses: actions/checkout@v4
+      - name: testenv print
+        run: echo "${{vars.QA}"
       - name: Install jq
         run: |
           sudo apt-get update
