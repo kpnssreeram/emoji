@@ -74,7 +74,7 @@ jobs:
       - name: Git Checkout 
         uses: actions/checkout@v4
       - name: testenv print
-        run: echo "${{vars.QA}"
+        run: echo "${{vars.QA}}"
       - name: Install jq
         run: |
           sudo apt-get update
