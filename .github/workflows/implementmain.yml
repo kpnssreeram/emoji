@@ -65,7 +65,7 @@ permissions:
 jobs:
   secretsjenkinfile:
     runs-on: ubuntu-latest
-    environment: testenv
+    
     # timeout-minutes: 10
     # strategy:
     #   fail-fast: false
