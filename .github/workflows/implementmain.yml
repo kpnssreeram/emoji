@@ -73,8 +73,14 @@ jobs:
     steps:
       - name: Git Checkout 
         uses: actions/checkout@v4
-      - name: testenv print
-        run: echo "${{vars.QA}}"
+
+      - name: Import
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: 'Environments.env'
+          expand: 'true'
+
+
       - name: Install jq
         run: |
           sudo apt-get update
@@ -85,11 +91,13 @@ jobs:
           API_PASSWORD=$(jq -r '.inputs.ApiKey' $GITHUB_EVENT_PATH)
           echo ::add-mask::$API_PASSWORD
           echo API_PASSWORD=$API_PASSWORD >> $GITHUB_ENV
+
       - name: mask AccessToken
         run: |
           Access_Token=$(jq -r '.inputs.AccessToken' $GITHUB_EVENT_PATH)
           echo ::add-mask::$Access_Token
           echo Access_Token=$Access_Token >> $GITHUB_ENV
+
       - name: print masking apikey and accessToken and 
         run: 
           echo "${{env.API_PASSWORD}} is api key and ${{env.Access_Token}} is access token and global variable is ${{vars.SERVICE}}"
@@ -127,24 +135,30 @@ jobs:
               core.setOutput('env_acc_id', awsenv[process.env.AWS_ENVIRONMENT].env_acc_id)
       
         
-      # - name: Universe_print
-      #   run: echo ${{github.event.inputs.Universe}}
-
-      # - name: branch_print
-      #   run: |
-      #     run: echo ${{github.event.inputs.branch}}
-
+        
       - name: All_inputs_print
         run: |
-          echo "The Uninverse is ${{github.event.inputs.Universe}} and Branch is ${{github.event.inputs.branch}} and AWS \
-          Env is ${{github.event.inputs.aws_environment}}. "
+          echo "The Uninverse is ${{inputs.Universe}} and Branch is ${{inputs.branch}} and AWS \
+          Env is ${{inputs.aws_environment}}. "
+      
 
-      # - name: configure aws credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     role-to-assume: arn:aws:iam::${{steps.accountid.outputs.env_acc_id}}:role/emojigitrole
-      #     role-session-name: samplerolesession
-      #     aws-region: ${{ env.AWS_REGION }}
+      - name: setting up
+        run: | 
+          if [[ ${{inputs.aws_environment}}=='qa']]; then 
+            echo "awsCred=${{env.AWS_ENVIRONMENT_QA}}">>$GITHUB_ENV
+          else
+            echo "awsCred=${{env.AWS_ENVIRONMENT_PROD}}">>$GITHUB_ENC
+            
+
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{env.awsCred}}:role/emojigitrole
+          role-session-name: emojiSession
+          aws-region: ${{ env.AWS_REGION }}
+
+
 
       - name: Deploy Secrets
         run: |
