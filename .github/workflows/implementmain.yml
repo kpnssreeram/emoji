@@ -1,186 +1,51 @@
-name: emoji_branch_WFs
-on: 
+name: Deploy Emoji
+
+on:
   workflow_dispatch:
     inputs:
-      # branch:
-      #   description: 'Git branch name to checkout'  
-      #   default: 'main' 
-      #   type: choice
-      #   options: [main, kpnssbranch, feature/**]
       Universe:
         description: 'Universe to deploy'
         default: 'ci'
         type: choice
         options: [ci, cert, anon, uat, bazaar]
+        required: true
 
       aws_environment:
         description: 'Which environment to deploy'
         default: 'qa'
         type: choice
         options: [qa, prod]
+        required: true
 
       ApiKey:
         description: 'API Key value'
         type: string
-        required: false
-        
+        required: true
+
       AccessToken:
-        description: 'Access Token value' 
+        description: 'Access Token value'
         type: string
-        required: false
-        
-      # DatadogKey:
-      #   description: 'Datadog Key value'
-      #   type: string
-      #   required: true
-      
-      # DatadogKey=${{ github.event.inputs.DatadogKey }} \  need to add in deploy section
+        required: true
 
-
-# env:
-#   # ENVIRONMENT_TAG: ${{github.event.inputs.Universe}}  Do it laterss
-#   AWS_ENVIRONMENT: ${{ github.event.inputs.aws_environment}}
-#   STACK_NAME: ${{github.event.inputs.Universe}}-emoji-secret-test
-#   AWS_REGION: us-east-1
-#   TEAM: emodb-dev@bazaarvoice.com
-#   #SERVICE: emoji
-#   DATATYPE: client+personal
-#   # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-  
-permissions:
-  id-token: write
-  contents: read
-  actions: read
+env:
+  SERVICE: emoji
 
 jobs:
-  secretsjenkinfile:
+  deploy:
     runs-on: ubuntu-latest
-    
-    # timeout-minutes: 10
-    # strategy:
-    #   fail-fast: false
 
     steps:
-      - name: Git Checkout 
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Import
-        uses: cardinalby/export-env-action@v2
+      - name: Deploy Secrets
+        uses: ./.github/workflows/deploy-secrets.yml
         with:
-          envFile: 'Environments.env'
-          expand: 'true'
+          Universe: ${{ github.event.inputs.Universe }}
+          aws_environment: ${{ github.event.inputs.aws_environment }}
+          ApiKey: ${{ github.event.inputs.ApiKey }}
+          AccessToken: ${{ github.event.inputs.AccessToken }}
 
+      # Add additional steps for your deployment process here
 
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install jq
-
-      - name: mask ApiKey
-        run: |
-          API_PASSWORD=$(jq -r '.inputs.ApiKey' $GITHUB_EVENT_PATH)
-          echo ::add-mask::$API_PASSWORD
-          echo API_PASSWORD=$API_PASSWORD >> $GITHUB_ENV
-
-      - name: mask AccessToken
-        run: |
-          Access_Token=$(jq -r '.inputs.AccessToken' $GITHUB_EVENT_PATH)
-          echo ::add-mask::$Access_Token
-          echo Access_Token=$Access_Token >> $GITHUB_ENV
-
-      - name: print masking apikey and accessToken and 
-        run: 
-          echo "${{env.API_PASSWORD}} is api key and ${{env.Access_Token}} is access token and global variable is ${{vars.SERVICE}}"
-
-
-      # - name: Load VPC data
-      #   id: vpc
-      #   uses: actions/github-script@v5
-      #   env:
-      #     ENVIRONMENT_TAG: ${{ env.ENVIRONMENT_TAG}}
-      #   with:
-      #     script: |
-      #       const vpcData = {
-      #         "ci": {"vpc_id": "ci-vpc-id"},
-      #         "cert": {"vpc_id": "cert-vpc-id"},
-      #         "anon": {"vpc_id": "anon-vpc-id"},
-      #         "uat": {"vpc_id": "uat-vpc-id"},
-      #         "bazaar": {"vpc_id": "bazaar-vpc-id"},
-      #         // Add other environments as needed
-      #       };
-      #       core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
-
-      # - name: Load Env Account Id
-      #   id: accountid
-      #   uses: actions/github-script@v5
-      #   env:
-      #     AWS_ENVIRONMENT: ${{ env.AWS_ENVIRONMENT}}
-      #   with:
-      #       script: |
-      #         const awsenv = {
-      #           "qa": {"env_acc_id": "549050352176"},
-      #           "prod": {"env_acc_id": "468552248569"},
-      #           // Add other environments as needed
-      #         };
-      #         core.setOutput('env_acc_id', awsenv[process.env.AWS_ENVIRONMENT].env_acc_id)
-      
-        
-        
-      - name: All_inputs_print
-        run: |
-          echo "The Uninverse is ${{inputs.Universe}} and Branch is ${{github.ref}} and AWS \
-          Env is ${{inputs.aws_environment}}. "
-      
-
-      - name: setting up
-        run: |
-            if [ "${{ inputs.aws_environment }}" == "qa" ]; then
-              echo "AWSCRED=${{env.AWS_ENVIRONMENT_QA}}" >> $GITHUB_ENV
-            elif [ "${{ inputs.Universe }}" == "ci" ]; then
-               echo "STACK_NAME=${{env.STACK_NAME_CI}}">> $GITHUB_ENV
-            else
-              echo "AWSCRED=${{env.AWS_ENVIRONMENT_PROD}}" >> $GITHUB_ENV
-              echo "STACK_NAME=${{env.STACK_NAME_QA}}" >> $GITHUB_ENV
-
-            fi
-        shell: bash
-            
-
-
-      # - name: configure aws credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     role-to-assume: arn:aws:iam::${{env.AWSCRED}}:role/emojigitrole
-      #     role-session-name: emojiSession
-      #     aws-region: ${{ env.AWS_REGION }}
-
-
-
-      - name: Deploy Secrets Workflow
-        uses: kpnssreeram/emoji/.github/workflows/deploy-secrets.yml@emojtest
-        
-    
-          
-
-
-
-      # - name: Send success notification
-      #   if: success()
-      #   env:
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}  
-      #   uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     author_name: GitHub Action
-      #     fields: repo,message,commit,author,action
-      #     text: 'Build #${{ github.run_number }} succeeded'  
-          
-
-      # - name: Send failure notification
-      #   if: failure()
-      #   uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     author_name: GitHub Action
-      #     fields: repo,message,commit,author,action
-      #     text: 'Build #${{ github.run_number }} failed'
+  # Other jobs, if needed
