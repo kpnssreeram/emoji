@@ -38,8 +38,3 @@ jobs:
       aws_environment: ${{ github.event.inputs.aws_environment }}
       ApiKey: ${{ github.event.inputs.ApiKey }}
       AccessToken: ${{ github.event.inputs.AccessToken }}
-
-
-      # Add additional steps for your deployment process here
-
-  # Other jobs, if needed
