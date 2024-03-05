@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy Secrets
-        uses: ./.github/workflows/deploy-secrets.yml
+        uses: ./.github/workflows/deploy-secrets.yml@emojtest
         with:
           Universe: ${{ github.event.inputs.Universe }}
           aws_environment: ${{ github.event.inputs.aws_environment }}
