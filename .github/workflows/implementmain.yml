@@ -32,7 +32,7 @@ env:
 
 jobs:
   deploy:
-    uses: kpnssreeram/emoji/.github/workflows/deploysec.yml@emojtest
+    uses: ./.github/workflows/deploysec.yml
     with:
       Universe: ${{ github.event.inputs.Universe }}
       aws_environment: ${{ github.event.inputs.aws_environment }}
