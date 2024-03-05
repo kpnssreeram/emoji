@@ -143,11 +143,13 @@ jobs:
       
 
       - name: setting up
-        run: | 
-          if [ "${{inputs.aws_environment}}"=="qa"]; then 
-            echo "awsCred=${{env.AWS_ENVIRONMENT_QA}}">>$GITHUB_ENV
-          else
-            echo "awsCred=${{env.AWS_ENVIRONMENT_PROD}}">>$GITHUB_ENV
+        run: |
+            if [ "${{ env.AWS_ENVIRONMENT }}" == "qa" ]; then
+              echo "awsCred=549050352176" >> $GITHUB_ENV
+            else
+              echo "awsCred=468552248569" >> $GITHUB_ENV
+            fi
+        shell: bash
             
 
 
