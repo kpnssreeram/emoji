@@ -157,8 +157,8 @@ jobs:
 
 
       - name: Deploy Secrets Workflow
-        uses: ./.github/workflows/deploy-secrets.yml
-
+        uses: kpnssreeram/emoji/.github/workflows/deploy-secrets.yml@emojtest
+        
     
           
 
