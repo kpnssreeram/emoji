@@ -47,15 +47,15 @@ on:
       # DatadogKey=${{ github.event.inputs.DatadogKey }} \  need to add in deploy section
 
 
-env:
-  # ENVIRONMENT_TAG: ${{github.event.inputs.Universe}}  Do it laterss
-  AWS_ENVIRONMENT: ${{ github.event.inputs.aws_environment}}
-  STACK_NAME: ${{github.event.inputs.Universe}}-emoji-secret-test
-  AWS_REGION: us-east-1
-  TEAM: emodb-dev@bazaarvoice.com
-  #SERVICE: emoji
-  DATATYPE: client+personal
-  # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+# env:
+#   # ENVIRONMENT_TAG: ${{github.event.inputs.Universe}}  Do it laterss
+#   AWS_ENVIRONMENT: ${{ github.event.inputs.aws_environment}}
+#   STACK_NAME: ${{github.event.inputs.Universe}}-emoji-secret-test
+#   AWS_REGION: us-east-1
+#   TEAM: emodb-dev@bazaarvoice.com
+#   #SERVICE: emoji
+#   DATATYPE: client+personal
+#   # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   
 permissions:
   id-token: write
@@ -144,25 +144,30 @@ jobs:
 
       - name: setting up
         run: |
-            if [ "${{ env.AWS_ENVIRONMENT }}" == "qa" ]; then
-              echo "awsCred=${{env.AWS_ENVIRONMENT_QA}}" >> $GITHUB_ENV
+            if [ "${{ inputs.aws_environment }}" == "qa" ]; then
+              echo "AWSCRED=${{env.AWS_ENVIRONMENT_QA}}" >> $GITHUB_ENV
+            elif [ "${{ inputs.Universe }}" == "ci" ]; then
+               echo "STACK_NAME=${{env.STACK_NAME_CI}}">> $GITHUB_ENV`
             else
-              echo "awsCred=${{env.AWS_ENVIRONMENT_PROD}}" >> $GITHUB_ENV
+              echo "AWSCRED=${{env.AWS_ENVIRONMENT_PROD}}" >> $GITHUB_ENV
+              echo "STACK_NAME=${{env.STACK_NAME_QA}}" >> $GITHUB_
+
             fi
         shell: bash
             
 
 
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::${{env.awsCred}}:role/emojigitrole
-          role-session-name: emojiSession
-          aws-region: ${{ env.AWS_REGION }}
+      # - name: configure aws credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::${{env.AWSCRED}}:role/emojigitrole
+      #     role-session-name: emojiSession
+      #     aws-region: ${{ env.AWS_REGION }}
 
 
 
       - name: Deploy Secrets
+          
         run: |
           cd ops/cfn
           ls
