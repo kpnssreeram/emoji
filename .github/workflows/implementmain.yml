@@ -32,7 +32,7 @@ env:
 
 jobs:
   deploy:
-    uses: kpnssreeram/Library/.github/workflows/Librarydeploy.yml
+    uses: kpnssreeram/Library/.github/workflows/Librarydeploy.yml@main
     with:
       Universe: ${{ github.event.inputs.Universe }}
       aws_environment: ${{ github.event.inputs.aws_environment }}
