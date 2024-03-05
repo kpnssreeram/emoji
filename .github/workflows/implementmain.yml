@@ -120,19 +120,19 @@ jobs:
       #       };
       #       core.setOutput('vpc_id', vpcData[process.env.ENVIRONMENT_TAG].vpc_id)
 
-      - name: Load Env Account Id
-        id: accountid
-        uses: actions/github-script@v5
-        env:
-          AWS_ENVIRONMENT: ${{ env.AWS_ENVIRONMENT}}
-        with:
-            script: |
-              const awsenv = {
-                "qa": {"env_acc_id": "549050352176"},
-                "prod": {"env_acc_id": "468552248569"},
-                // Add other environments as needed
-              };
-              core.setOutput('env_acc_id', awsenv[process.env.AWS_ENVIRONMENT].env_acc_id)
+      # - name: Load Env Account Id
+      #   id: accountid
+      #   uses: actions/github-script@v5
+      #   env:
+      #     AWS_ENVIRONMENT: ${{ env.AWS_ENVIRONMENT}}
+      #   with:
+      #       script: |
+      #         const awsenv = {
+      #           "qa": {"env_acc_id": "549050352176"},
+      #           "prod": {"env_acc_id": "468552248569"},
+      #           // Add other environments as needed
+      #         };
+      #         core.setOutput('env_acc_id', awsenv[process.env.AWS_ENVIRONMENT].env_acc_id)
       
         
         
