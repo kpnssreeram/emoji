@@ -150,7 +150,7 @@ jobs:
                echo "STACK_NAME=${{env.STACK_NAME_CI}}">> $GITHUB_ENV`
             else
               echo "AWSCRED=${{env.AWS_ENVIRONMENT_PROD}}" >> $GITHUB_ENV
-              echo "STACK_NAME=${{env.STACK_NAME_QA}}" >> $GITHUB_
+              echo "STACK_NAME=${{env.STACK_NAME_QA}}" >> $GITHUB_ENV
 
             fi
         shell: bash
