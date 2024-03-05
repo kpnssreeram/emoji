@@ -147,7 +147,7 @@ jobs:
           if [ "${{inputs.aws_environment}}"=="qa"]; then 
             echo "awsCred=${{env.AWS_ENVIRONMENT_QA}}">>$GITHUB_ENV
           else
-            echo "awsCred=${{env.AWS_ENVIRONMENT_PROD}}">>$GITHUB_ENC
+            echo "awsCred=${{env.AWS_ENVIRONMENT_PROD}}">>$GITHUB_ENV
             
 
 
