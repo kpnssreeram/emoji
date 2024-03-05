@@ -2,33 +2,23 @@ name: emoji_branch_WFs
 on: 
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Git branch name to checkout'  
-        default: 'main' 
-        type: choice
-        options:
-          - main
-          - kpnssbranch
-          - feature/**
+      # branch:
+      #   description: 'Git branch name to checkout'  
+      #   default: 'main' 
+      #   type: choice
+      #   options: [main, kpnssbranch, feature/**]
       Universe:
         description: 'Universe to deploy'
         default: 'ci'
         type: choice
-        options:
-          - ci
-          - cert
-          - anon
-          - uat
-          - bazaar
+        options: [ci, cert, anon, uat, bazaar]
+
       aws_environment:
         description: 'Which environment to deploy'
         default: 'qa'
         type: choice
-        options:
-          - qa
-          - prod
-      
-                      
+        options: [qa, prod]
+
       ApiKey:
         description: 'API Key value'
         type: string
@@ -138,7 +128,7 @@ jobs:
         
       - name: All_inputs_print
         run: |
-          echo "The Uninverse is ${{inputs.Universe}} and Branch is ${{inputs.branch}} and AWS \
+          echo "The Uninverse is ${{inputs.Universe}} and Branch is ${{github.ref}} and AWS \
           Env is ${{inputs.aws_environment}}. "
       
 
