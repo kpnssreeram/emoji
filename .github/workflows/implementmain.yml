@@ -32,19 +32,13 @@ env:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    uses: kpnssreeram/emoji/.github/workflows/deploysec.yml@emojtest
+    with:
+      Universe: ${{ github.event.inputs.Universe }}
+      aws_environment: ${{ github.event.inputs.aws_environment }}
+      ApiKey: ${{ github.event.inputs.ApiKey }}
+      AccessToken: ${{ github.event.inputs.AccessToken }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Deploy Secrets
-        uses: kpnssreeram/emoji@emojtest
-        with:
-          Universe: ${{ github.event.inputs.Universe }}
-          aws_environment: ${{ github.event.inputs.aws_environment }}
-          ApiKey: ${{ github.event.inputs.ApiKey }}
-          AccessToken: ${{ github.event.inputs.AccessToken }}
 
       # Add additional steps for your deployment process here
 
