@@ -48,12 +48,14 @@ jobs:
 
       - name: Mask ApiKey and AccessToken
         run: |
-            API_PASSWORD=$(jq --env-disable=API_PASSWORD -r '.inputs.ApiKey // empty' "$GITHUB_EVENT_PATH")
-            echo "API_PASSWORD: $API_PASSWORD"
-            Access_Token=$(jq --env-disable=Access_Token -r '.inputs.AccessToken // empty' "$GITHUB_EVENT_PATH")
-            echo "Access_Token: $Access_Token"
-            echo "API_PASSWORD=$API_PASSWORD" >> $GITHUB_ENV
-            echo "Access_Token=$Access_Token" >> $GITHUB_ENV
+          API_PASSWORD=$(jq -r '.inputs.ApiKey' $GITHUB_EVENT_PATH)
+          ACCESS_TOKEN=$(jq -r '.inputs.AccessToken' $GITHUB_EVENT_PATH)
+          echo ::add-mask::$API_PASSWORD
+          echo ::add-mask::$ACCESS_TOKEN
+          echo "API_PASSWORD=$API_PASSWORD" >> $GITHUB_ENV
+          echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+          echo "API_PASSWORD: $API_PASSWORD"
+      
             
 
       # - name: Setup Environment Variables
