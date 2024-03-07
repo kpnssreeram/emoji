@@ -12,9 +12,9 @@ on:
 
       aws_environment:
         description: 'Which environment to deploy'
-        default: 'qa'
+        default: 'QA'
         type: choice
-        options: [qa, prod]
+        options: [QA, PROD]
         required: true
 
       ApiKey:
