@@ -1,5 +1,4 @@
 name: Deploy Secrets
-
 on:
   workflow_call:
     inputs:
@@ -20,17 +19,9 @@ on:
         description: 'Access Token value'
         type: string
         required: false
-
-
-env:
-  AWS_REGION: us-east-1
-  TEAM: emodb-dev@bazaarvoice.com
-  DATATYPE: client+personal
-
 jobs:
   deploy-secrets:
     runs-on: ubuntu-latest
-
     steps:
       - name: Git Checkout
         uses: actions/checkout@v3
@@ -54,10 +45,6 @@ jobs:
           echo ::add-mask::$ACCESS_TOKEN
           echo "API_PASSWORD=$API_PASSWORD" >> $GITHUB_ENV
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
-          echo "API_PASSWORD: $API_PASSWORD"
-      
-            
-
       # - name: Setup Environment Variables
       #   run: |
       #     if [ "${{ inputs.aws_environment }}" == "qa" ]; then
@@ -72,20 +59,17 @@ jobs:
       #       echo "STACK_NAME=${{ secrets.STACK_NAME_QA }}" >> $GITHUB_ENV
       #     fi
       #   shell: bash
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', inputs.aws_environment)] }}:role/emojigitrole
           role-session-name: emojiSession
           aws-region: ${{ env.AWS_REGION }}
-
-
   
       - name: Deploy Secrets
         run: |
           aws cloudformation deploy \
-            --stack-name ${{ env[format('STACK_NAME_{0}', inputs.Universe )] }} \
+            --stack-name ${{ env[format('STACK_NAME_{0}', inputs.Universe )] }}-emoji-test \
             --template-file cd ops/cfn/secrets.cfn.yml \
             --region ${{ env.AWS_REGION }} \
             --capabilities CAPABILITY_IAM \
