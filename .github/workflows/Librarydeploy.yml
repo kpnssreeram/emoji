@@ -6,10 +6,6 @@ on:
         required: true
         type: string
 
-      aws_environment:
-        required: true
-        type: string
-
       ApiKey:
         description: 'API Key value'
         type: string
@@ -19,6 +15,12 @@ on:
         description: 'Access Token value'
         type: string
         required: false
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
 jobs:
   deploy-secrets:
     runs-on: ubuntu-latest
@@ -26,10 +28,20 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v3
 
+      - name: Import Environment File
+        run: |
+          if [ "${{ inputs.Universe }}" == "ci" ]||[ "${{ inputs.Universe }}" == "cert" ]||[ "${{ inputs.Universe }}" == "anon" ]||; then
+              echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+              echo "ENVNAME=QA">>$GITHUB_ENV
+            else
+              echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+              echo "ENVNAME=PROD">>$GITHUB_ENV
+            fi
+
       - name: Import Environment Variables
         uses: cardinalby/export-env-action@v2
         with:
-          envFile: 'Environments.env'
+          envFile: '${{env.ENVFILE}}'
           expand: 'true'
 
       - name: Install jq
@@ -45,31 +57,18 @@ jobs:
           echo ::add-mask::$ACCESS_TOKEN
           echo "API_PASSWORD=$API_PASSWORD" >> $GITHUB_ENV
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
-      # - name: Setup Environment Variables
-      #   run: |
-      #     if [ "${{ inputs.aws_environment }}" == "qa" ]; then
-      #       echo "AWSCRED=${{ secrets.AWS_ENVIRONMENT_QA }}" >> $GITHUB_ENV
-      #     else
-      #       echo "AWSCRED=${{ secrets.AWS_ENVIRONMENT_PROD }}" >> $GITHUB_ENV
-      #     fi
-
-      #     if [ "${{ inputs.Universe }}" == "ci" ]; then
-      #       echo "STACK_NAME=${{ secrets.STACK_NAME_CI }}" >> $GITHUB_ENV
-      #     else
-      #       echo "STACK_NAME=${{ secrets.STACK_NAME_QA }}" >> $GITHUB_ENV
-      #     fi
-      #   shell: bash
+  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', inputs.aws_environment)] }}:role/emojigitrole
+          role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', env.ENVNAME)] }}:role/emojigitrole
           role-session-name: emojiSession
           aws-region: ${{ env.AWS_REGION }}
   
       - name: Deploy Secrets
         run: |
           aws cloudformation deploy \
-            --stack-name ${{ env[format('STACK_NAME_{0}', inputs.Universe )] }}-emoji-test \
+            --stack-name ${{inputs.Universe }}-emoji-test \
             --template-file cd ops/cfn/secrets.cfn.yml \
             --region ${{ env.AWS_REGION }} \
             --capabilities CAPABILITY_IAM \
@@ -80,10 +79,10 @@ jobs:
               ApiKey=${{ env.API_PASSWORD }} \
             --tags \
               bv:nexus:team=${{ env.TEAM }} \
-              bv:nexus:vpc=1233 \
+              bv:nexus:vpc=${{ env.ENVNAME }}  \
               bv:system=emodb \
-              bv:nexus:service=${{ vars.SERVICE }} \
+              bv:nexus:service=${{env.SERVICE }} \
               bv:nexus:owner=${{ env.TEAM }} \
               bv:nexus:costcenter=${{ env.TEAM }} \
               bv:nexus:datatype=${{ env.DATATYPE }} \
-              bv:nexus:env=1234
+              bv:nexus:env=${{ env.ENVNAME }} \
