@@ -1,0 +1,36 @@
+name: Deploying docker registry
+on:
+  workflow_dispatch:
+    inputs:
+        vpc:
+            required: true
+            default: qa
+            type: choice
+            options: [qa,prod]
+permissions:
+    id-token: write
+    contents: read
+    actions: read
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Import Environment File
+          run: |
+            if [ "${{ inputs.vpc }}" == "ci" ]||[ "${{ inputs.vpc }}" == "cert" ]||[ "${{ inputs.vpc }}" == "anon" ]; then
+                echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+                echo "ENVNAME=qa">>$GITHUB_ENV
+                else
+                echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+                echo "ENVNAME=prod">>$GITHUB_ENV
+                fi
+        
+        - name: Import Environment Variables
+          uses: cardinalby/export-env-action@v2
+          with:
+            envFile: '${{env.ENVFILE}}'
+            expand: 'true'
+
+        
