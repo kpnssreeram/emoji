@@ -30,7 +30,7 @@ jobs:
 
       - name: Import Environment File
         run: |
-          if [ "${{ inputs.Universe }}" == "ci" ]||[ "${{ inputs.Universe }}" == "cert" ]||[ "${{ inputs.Universe }}" == "anon" ]||; then
+          if [ "${{ inputs.Universe }}" == "ci" ]||[ "${{ inputs.Universe }}" == "cert" ]||[ "${{ inputs.Universe }}" == "anon" ]; then
               echo "ENVFILE=Environments.env" >> $GITHUB_ENV
               echo "ENVNAME=qa">>$GITHUB_ENV
             else
