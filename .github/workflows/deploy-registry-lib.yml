@@ -1,4 +1,4 @@
-name: Deploy Registry
+name: Docker registry-lib
 on:
   workflow_call:
     inputs:
@@ -10,7 +10,7 @@ permissions:
     contents: read
     actions: read
 jobs:
-  registry:
+  deploy-registry:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,7 +37,7 @@ jobs:
           role-session-name: emojidockerregistry
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Deploy Secrets
+      - name: Deploying docker registry
         run: |
           aws cloudformation deploy \
           --stack-name emoji-docker-registry-test \
