@@ -1,14 +1,20 @@
-name: Deploying docker registry
+name: Deploy internal load balancer
 on:
   workflow_dispatch:
     inputs:
-        vpc:
-            required: true
-            default: qa
+        Universe:
+            description: 'Universe to deploy'
+            default: 'ci'
             type: choice
-            options: [qa,prod]
+            options: [ci, cert, anon, uat, bazaar]
+            required: true
+        DnsSuffix:
+            description: Use for testing purposes. Leave blank for real universes
+            default: ''
+        
 jobs:
-  call-Libregistry:
+  call-internal-alb-lib:
     uses: ./.github/workflows/internal-alb-lib.yml
     with:
-      vpc: ${{inputs.vpc}}
+      Universe: ${{inputs.Universe}}
+      DnsSuffix: ${{inputs.DnsSuffix}}

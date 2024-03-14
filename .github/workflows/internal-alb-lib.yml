@@ -1,0 +1,74 @@
+name: internal load balancer -lib
+on:
+  workflow_call:
+    inputs:
+      Universe:
+        required: true
+        type: string
+      DnsSuffix:
+        required: false
+        type: string
+    # outputs:
+    #     firstword:
+    #         description: "job status"
+    #         value: ${{ jobs.deploy-internal-load-balancer.status }}
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+jobs:
+  deploy-internal-load-balancer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Import Environment File
+        run: |
+          if [ "${{ inputs.Universe }}" == "ci" ] || [ "${{ inputs.Universe }}" == "cert" ] || [ "${{ inputs.Universe }}" == "anon" ]; then
+              echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+              echo "ENVNAME=qa" >> $GITHUB_ENV
+          else
+              echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+              echo "ENVNAME=prod" >> $GITHUB_ENV
+          fi
+
+      - name: Import Environment Variables
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '${{ env.ENVFILE }}'
+          expand: 'true'
+  
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', env.ENVNAME)] }}:role/emojigitrole
+          role-session-name: deploy-internal-alb
+          aws-region: ${{ env.AWS_REGION }}
+  
+      - name: Deploy Secrets
+        run: |
+          export AWS_RETRY_MODE="standard"
+          export AWS_MAX_ATTEMPTS=15
+
+          aws cloudformation deploy \
+            --stack-name ${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb-test \
+            --template-file ops/cfn/internal-alb.cfn.yml \
+            --parameter-overrides \
+              Universe=${{ inputs.Universe }} \
+              DnsSuffix=${{ inputs.DnsSuffix }} \
+            --no-fail-on-empty-changeset \
+            --tags \
+              bv:nexus:team=${{ env.TEAM }} \
+              bv:nexus:vpc=${{ env.ENVNAME }} \
+              bv:system=emodb \
+              bv:nexus:service="emoji" \
+              bv:nexus:role="internal-elb" \
+              bv:nexus:owner=${{ env.TEAM }} \
+              bv:nexus:access=none \
+              bv:nexus:costcenter=${{ env.TEAM }} \
+              bv:nexus:datatype=client+personal \
+              bv:nexus:env=${{ env.ENVNAME }} \
+              universe="${{ inputs.Universe }}" \
+            --region ${region}
