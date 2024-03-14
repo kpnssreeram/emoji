@@ -1,0 +1,23 @@
+name: Deploy emoji service
+on:
+  workflow_dispatch:
+    inputs:
+        Universe:
+            description: 'Universe to deploy'
+            default: 'ci'
+            type: choice
+            options: [ci, cert, anon, uat, bazaar]
+            required: true
+        Version:
+            description: Emoji Docker Image Tag
+            default: 'latest'
+        DnsSuffix:
+            description: Use for testing purposes. Leave blank for real universes
+            default: ''
+        
+jobs:
+  call-internal-alb-lib:
+    uses: ./.github/workflows/service-lib.yml
+    with:
+      Universe: ${{inputs.Universe}}
+      DnsSuffix: ${{inputs.DnsSuffix}}
