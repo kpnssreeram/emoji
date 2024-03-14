@@ -1,0 +1,59 @@
+name: Deploy Registry
+on:
+  workflow_call:
+    inputs:
+      vpc:
+        required: true
+        type: string
+permissions:
+    id-token: write
+    contents: read
+    actions: read
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Import Environment File
+        run: |
+          if [ "${{ inputs.vpc }}" == "ci" ] || [ "${{ inputs.vpc }}" == "cert" ] || [ "${{ inputs.vpc }}" == "anon" ]; then
+            echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+          else
+            echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+          fi
+
+      - name: Import Environment Variables
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '${{ env.ENVFILE }}'
+          expand: 'true'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', env.ENVNAME)] }}:role/emojigitrole
+          role-session-name: emojidockerregistry
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy Secrets
+        run: |
+          aws cloudformation deploy \
+          --stack-name emoji-docker-registry-test \
+          --template-file ops/cfn/docker-registry.cfn.yml \
+          --parameter-overrides                           \
+            ECRRepositoryName=emodb/emoji-test                 \
+          --no-fail-on-empty-changeset                    \
+          --tags                                          \
+            bv:nexus:team="${{ env.TEAM }}"                       \
+            bv:nexus:vpc="${{ inputs.vpc }}"                         \
+            bv:system=emodb                               \
+            bv:nexus:service=emoji                        \
+            bv:nexus:role=docker-registry                 \
+            bv:nexus:owner="${{ env.TEAM }}"                      \
+            bv:nexus:access=none                          \
+            bv:nexus:costcenter="${{ env.TEAM }}"                 \
+            bv:nexus:datatype=intellectualproperty        \
+            bv:nexus:env="${{ inputs.vpc }}"                         \
+          --region ${{ env.AWS_REGION }}
