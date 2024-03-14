@@ -9,7 +9,7 @@ on:
             options: [qa,prod]
 
 jobs:
-  deploy:
+  deploy-registry:
     uses: ./.github/workflows/deploy-registry-lib.yml
     with:
       vpc: ${{inputs.vpc}}
