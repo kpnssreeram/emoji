@@ -20,4 +20,5 @@ jobs:
     uses: ./.github/workflows/service-lib.yml
     with:
       Universe: ${{inputs.Universe}}
+      Version: ${{inputs.Version}}
       DnsSuffix: ${{inputs.DnsSuffix}}
