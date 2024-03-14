@@ -1,0 +1,14 @@
+name: Deploying docker registry
+on:
+  workflow_dispatch:
+    inputs:
+        vpc:
+            required: true
+            default: qa
+            type: choice
+            options: [qa,prod]
+jobs:
+  call-Libregistry:
+    uses: ./.github/workflows/internal-alb-lib.yml
+    with:
+      vpc: ${{inputs.vpc}}
