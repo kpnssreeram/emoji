@@ -8,10 +8,10 @@ on:
       DnsSuffix:
         required: false
         type: string
-    # outputs:
-    #     firstword:
-    #         description: "job status"
-    #         value: ${{ jobs.deploy-internal-load-balancer.status }}
+    outputs:
+        firstword:
+            description: "job status"
+            value: ${{ jobs.deploy-internal-load-balancer.status }}
 permissions:
   id-token: write
   contents: read
