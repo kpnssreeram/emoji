@@ -22,6 +22,7 @@ jobs:
 
   slacknotify:
     runs-on: ubuntu-latest
+    needs: call-internal-alb-lib
     steps:
       - name: Slack Notification
         uses: act10ns/slack@v1
