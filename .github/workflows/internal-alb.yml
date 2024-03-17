@@ -21,7 +21,6 @@ jobs:
       DnsSuffix: ${{ inputs.DnsSuffix }}
 
   slacknotify:
-    needs: call-internal-alb-lib
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
