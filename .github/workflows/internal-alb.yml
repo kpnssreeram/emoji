@@ -24,12 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: call-internal-alb-lib
     steps:
-      - name: Slack Notification
-        uses: act10ns/slack@v1
+      - name: Alert to slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ always() }}
         with:
           status: ${{ needs.call-internal-alb-lib.outputs.firstword }}
-          channel: 'emodb-actionsnotify-test'
-          message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
+          fields: repo,message,workflow
         env:
-            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
