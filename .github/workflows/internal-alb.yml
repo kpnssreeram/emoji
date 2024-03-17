@@ -27,7 +27,7 @@ jobs:
       - name: Slack Notification
         uses: act10ns/slack@v1
         with:
-          status: ${{ job.status }}
-          channel: '#meetups'
+          status: ${{ needs.call-internal-alb-lib.outputs.firstword }}
+          channel: 'emodb-actionsnotify-test'
           message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
         if: always()
