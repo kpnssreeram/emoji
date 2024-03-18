@@ -45,8 +45,8 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
-          icon_emoji: ''
-          author_name: ${{env.AWS_REGION}}
+          icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
+          author_name: ${{env.GITHUB_REPOSITORY}}
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
