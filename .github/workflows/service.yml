@@ -24,6 +24,4 @@ jobs:
       DnsSuffix: ${{inputs.DnsSuffix}}
       
 
-#   slacknotify:
-#     needs: call-internal-alb-lib
 
