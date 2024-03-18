@@ -36,7 +36,7 @@ jobs:
       - name: Import Environment Variables
         uses: cardinalby/export-env-action@v2
         with:
-          envFile: '${{ env.ENVILE }}'
+          envFile: '${{ env.ENVFILE }}'
           expand: 'true'
 
       - name: Alert to slack
@@ -45,7 +45,7 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
-          author_name: Emoji
+          author_name: ${{env.GITHUB_REPOSITORY}} 
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
