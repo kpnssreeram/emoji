@@ -44,9 +44,8 @@ jobs:
         if: ${{ always() }}
         with:
           status: ${{ job.status }}
-          fields: repo,message,workflow,job,author
-          text: | 
-            Build #${{ github.run_number }} ended with ${{ job.status }}
+          fields: repo,message,workflow,job,author,job_summary
+          
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
