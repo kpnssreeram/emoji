@@ -1,12 +1,6 @@
-name: Deploying docker registry
+name: emoji-release
 on:
-  workflow_dispatch:
-    inputs:
-      vpc:
-        required: true
-        default: qa
-        type: choice
-        options: [qa, prod]
+  push:
 
 jobs:
   read:
