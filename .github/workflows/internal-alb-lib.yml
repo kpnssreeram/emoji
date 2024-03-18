@@ -45,9 +45,7 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,job,workflow
-          icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
-          author_name: ${{job.steps}}
-          
+          author_name: The workflow at ${{github.repository}} on branch ${{github.base_ref}} is successful
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
