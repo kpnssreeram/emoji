@@ -36,7 +36,7 @@ jobs:
       - name: Import Environment Variables
         uses: cardinalby/export-env-action@v2
         with:
-          envFile: '${{ env.ENVILE }}'
+          envFile: '${{ env.ENVFILE }}'
           expand: 'true'
 
       - name: Alert to slack
@@ -46,7 +46,6 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
           icon_emoji: ''
-          icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
           author_name: ${{env.AWS_REGION}}
           
         env:
