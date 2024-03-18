@@ -50,7 +50,7 @@ jobs:
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-            GITHUB_REPOSITOR: ${GITHUB_REPOSITORY}
+            GITHUB_REPOSITOR: ${{env.GITHUB_REPOSITORY}}
 
   
     #   - name: Configure AWS Credentials
