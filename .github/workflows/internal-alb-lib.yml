@@ -45,6 +45,7 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
+          author_name: Emoji
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
