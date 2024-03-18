@@ -31,12 +31,20 @@ jobs:
           MAJOR_VERSION=$(echo "${{ steps.get-release-version.outputs.release-version }}" | cut -d'.' -f1)
           echo "::set-output name=major-version::$MAJOR_VERSION"
 
+      - name: print
+        run:
+            echo ${{ steps.get-major-version.outputs.major-version }}
+
       - name: Get Development Version
         id: get-dev-version
         run: |
           MINOR_VERSION=$(echo "${{ steps.get-release-version.outputs.release-version }}" | cut -d'.' -f2)
           DEV_VERSION="${{ steps.get-major-version.outputs.major-version }}.$(($MINOR_VERSION + 1))-SNAPSHOT"
           echo "::set-output name=dev-version::$DEV_VERSION"
+
+      - name: print
+        run:
+            echo ${{ steps.get-dev-version.outputs.dev-version }}
 
 
 #   call-Libregistry:
