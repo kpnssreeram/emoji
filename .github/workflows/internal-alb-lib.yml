@@ -45,6 +45,7 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,workflow
+          text: "hi"
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
