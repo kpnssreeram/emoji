@@ -12,7 +12,7 @@ on:
             description: Emoji Docker Image Tag
             default: 'latest'
         DnsSuffix:
-            description: Use for testing purposes. Leave blank for real universes
+            description: Use for testing purposes. Leave blank for real universe
             default: ''
         
 jobs:
