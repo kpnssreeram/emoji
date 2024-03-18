@@ -1,36 +1,32 @@
 name: Deploy internal load balancer
-
 on:
   workflow_dispatch:
     inputs:
-      Universe:
-        description: 'Universe to deploy'
-        default: 'ci'
-        type: choice
-        options: [ci, cert, anon, uat, bazaar]
-        required: true
-      DnsSuffix:
-        description: Use for testing purposes. Leave blank for real universes
-        default: ''
-
+        Universe:
+            description: 'Universe to deploy'
+            default: 'ci'
+            type: choice
+            options: [ci, cert, anon, uat, bazaar]
+            required: true
+        DnsSuffix:
+            description: Use for testing purposes. Leave blank for real universes
+            default: ''
+        
 jobs:
   call-internal-alb-lib:
     uses: ./.github/workflows/internal-alb-lib.yml
     with:
-      Universe: ${{ inputs.Universe }}
-      DnsSuffix: ${{ inputs.DnsSuffix }}
+      Universe: ${{inputs.Universe}}
+      DnsSuffix: ${{inputs.DnsSuffix}}
 
-  slacknotify:
-    runs-on: ubuntu-latest
-    needs: call-internal-alb-lib
-    steps:
-      - name: Slack Notification
-        uses: act10ns/slack@v1
-        with:
-          status: ${{ job.status}}
-          channel: 'emodb-actionsnotify-test'
-          message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
-          steps: ${{ toJson(steps) }}
-        env:
-            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
+#   slacknotify:
+#     needs: call-internal-alb-lib
+#     - name: Alert to slack
+#     uses: 8398a7/action-slack@v3
+#         if: ${{ failure() }}
+#         with:
+#         status: ${{ job.status }}
+#         fields: repo,message,workflow
+#         notify_when: "failure"
+#         env:
+#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

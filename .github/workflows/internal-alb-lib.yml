@@ -39,16 +39,15 @@ jobs:
         with:
           envFile: '${{ env.ENVFILE }}'
           expand: 'true'
-      - name: Slack Notification
-        uses: act10ns/slack@v1
+      - name: Alert to slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ failure() }}
         with:
-            status: ${{ job.status}}
-            channel: 'emodb-actionsnotify-test'
-            message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
-            steps: ${{ toJson(steps) }}
-        env:
+            status: ${{ job.status }}
+            fields: repo,message,workflow
+            notify_when: "failure"
+          env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
   
     #   - name: Configure AWS Credentials
     #     uses: aws-actions/configure-aws-credentials@v1
