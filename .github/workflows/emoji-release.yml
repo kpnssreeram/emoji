@@ -1,21 +1,46 @@
-name: emoji-release
+name: Deploying docker registry
 on:
-    workflow_dispatch:
-        inputs:
-            emoji:
-                description: 'Emoji to release'
-                required: true
+  workflow_dispatch:
+    inputs:
+      vpc:
+        required: true
+        default: qa
+        type: choice
+        options: [qa, prod]
 
 jobs:
-    release:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v2
-              with:
-                  node-version: '14'
-                  registry-url: 'https://registry.npmjs.org'
-            - run: npm ci
-            - run: npm run build
-            - run: npm publish --access public
-              
+  read:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'temurin'
+
+      - name: Get Release Version
+        id: get-release-version
+        run: |
+          RELEASE_VERSION=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='version']/text()" pom.xml | sed 's/-SNAPSHOT//g')
+          echo "::set-output name=release-version::$RELEASE_VERSION"
+
+      - name: Get Major Version
+        id: get-major-version
+        run: |
+          MAJOR_VERSION=$(echo "${{ steps.get-release-version.outputs.release-version }}" | cut -d'.' -f1)
+          echo "::set-output name=major-version::$MAJOR_VERSION"
+
+      - name: Get Development Version
+        id: get-dev-version
+        run: |
+          MINOR_VERSION=$(echo "${{ steps.get-release-version.outputs.release-version }}" | cut -d'.' -f2)
+          DEV_VERSION="${{ steps.get-major-version.outputs.major-version }}.$(($MINOR_VERSION + 1))-SNAPSHOT"
+          echo "::set-output name=dev-version::$DEV_VERSION"
+
+
+#   call-Libregistry:
+#     uses: ./.github/workflows/deploy-registry-lib.yml
+#     with:
+#       vpc: ${{inputs.vpc}}

@@ -1,0 +1,39 @@
+name: emoji-release-lib
+on:
+    workflow_dispatch:
+        inputs:
+            ReleaseVersion:
+                description: 'Release version'
+                required: true
+            DevelopmentVersion:
+                description: 'Development version'
+                required: true
+            Universe:
+                required: true
+                type: string
+
+jobs:
+    Emoji-release-lib:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Import Environment File
+              run: |
+                if [ "${{ inputs.vpc }}" == "ci" ] || [ "${{ inputs.vpc }}" == "cert" ] || [ "${{ inputs.vpc }}" == "anon" ]; then
+                  echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+                else
+                  echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+                fi
+
+            - name: Release
+              run: |
+                mvn compile -e -Dresume=false                    \
+                -DreleaseProfiles=docker                          \
+                -DreleaseVersion=${params.ReleaseVersion}         \
+                -DdevelopmentVersion=${params.DevelopmentVersion} \
+                -Darguments="-DskipTests                          \
+                -DskipITs                                         \
+                -Ddependency-check.skip=true                      \
+                -Dmaven.javadoc.skip=true"                        \
+                release:clean release:prepare release:perform
