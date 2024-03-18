@@ -45,8 +45,8 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
-          message: ${{ job.message }}
-          author_name: ${{ job.status }}
+          icon_emoji: ''
+          author_name: ${GITHUB_REPOSITORY}
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
