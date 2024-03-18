@@ -20,15 +20,17 @@ jobs:
       Universe: ${{ inputs.Universe }}
       DnsSuffix: ${{ inputs.DnsSuffix }}
 
-#   slacknotify:
-#     runs-on: ubuntu-latest
-#     needs: call-internal-alb-lib
-#     steps:
-#       - name: Slack Notification
-#         uses: act10ns/slack@v1
-#         with:
-#           status: ${{ job.status}}
-#           channel: 'emodb-actionsnotify-test'
-#           message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
-#           steps: ${{ toJson(steps) }}
-#         if: always()
+  slacknotify:
+    runs-on: ubuntu-latest
+    needs: call-internal-alb-lib
+    steps:
+      - name: Slack Notification
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status}}
+          channel: 'emodb-actionsnotify-test'
+          message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
+          steps: ${{ toJson(steps) }}
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
