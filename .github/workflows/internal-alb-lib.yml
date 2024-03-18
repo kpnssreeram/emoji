@@ -43,10 +43,10 @@ jobs:
         uses: 8398a7/action-slack@v3
         if: ${{ always() }}
         with:
-          status: started
+          status: ${{ job.status }}
           fields: repo,message,job,workflow
           icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
-          author_name: The Job is ru
+          author_name: ${{job.steps}}
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
