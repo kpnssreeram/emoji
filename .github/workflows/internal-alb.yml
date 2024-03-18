@@ -20,15 +20,3 @@ jobs:
       DnsSuffix: ${{inputs.DnsSuffix}}
     secrets:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-#   slacknotify:
-#     needs: call-internal-alb-lib
-#     - name: Alert to slack
-#     uses: 8398a7/action-slack@v3
-#         if: ${{ failure() }}
-#         with:
-#         status: ${{ job.status }}
-#         fields: repo,message,workflow
-#         notify_when: "failure"
-#         env:
-#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
