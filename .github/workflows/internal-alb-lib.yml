@@ -46,11 +46,10 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
           icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
-          author_name: ${{env.GITHUB_REPOSITOR}}
+          author_name: ${{github.repository}} 
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-            GITHUB_REPOSITOR: ${{env.GITHUB_REPOSITORY}}
 
   
     #   - name: Configure AWS Credentials
