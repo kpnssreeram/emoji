@@ -46,7 +46,7 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,workflow,job,author,job_summary
           icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
-          author_name: ${{env.GITHUB_REPOSITORY}}
+          author_name: ${{env.GITHUB_REPOSITOR}}
           
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
