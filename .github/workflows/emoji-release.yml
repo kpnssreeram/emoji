@@ -18,7 +18,7 @@ jobs:
       - name: Get Release Version
         id: get-release-version
         run: |
-          RELEASE_VERSION=$(xmllint --xpath "//\*\[local-name()='parent'\]/\*\[local-name()='version'\]/text()" pom.xml | sed 's/-SNAPSHOT//g')
+          RELEASE_VERSION=$(xmllint --xpath "//*[local-name()='parent']/*[local-name()='version']/text()" pom.xml | sed 's/-SNAPSHOT//g')
           echo "::set-output name=release-version::$RELEASE_VERSION"
       
       - name: Print
