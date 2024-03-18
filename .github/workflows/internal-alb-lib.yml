@@ -46,6 +46,8 @@ jobs:
             channel: 'emodb-actionsnotify-test'
             message: Deployed {{ env.GITHUB_REF_NAME }} branch Successfully
             steps: ${{ toJson(steps) }}
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
   
     #   - name: Configure AWS Credentials
