@@ -5,7 +5,7 @@ on:
             emoji:
                 description: 'Emoji to release'
                 required: true
-                default: '🎉'
+
 jobs:
     release:
         runs-on: ubuntu-latest
