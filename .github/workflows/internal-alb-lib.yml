@@ -1,4 +1,5 @@
 name: internal load balancer -lib
+
 on:
   workflow_call:
     inputs:
@@ -9,9 +10,10 @@ on:
         required: false
         type: string
     outputs:
-        firstword:
-            description: "job status"
-            value: ${{ jobs.deploy-internal-load-balancer.status }}
+      firstword:
+        description: "job status"
+        value: ${{ jobs.deploy-internal-load-balancer.status }}
+
 permissions:
   id-token: write
   contents: read
@@ -39,14 +41,16 @@ jobs:
         with:
           envFile: '${{ env.ENVFILE }}'
           expand: 'true'
+
       - name: Alert to slack
         uses: 8398a7/action-slack@v3
         if: ${{ always() }}
         with:
-            status: ${{ job.status }}
-            fields: repo,message,workflow
+          status: ${{ job.status }}
+          fields: repo,message,workflow
         env:
-           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
   
     #   - name: Configure AWS Credentials
     #     uses: aws-actions/configure-aws-credentials@v1
