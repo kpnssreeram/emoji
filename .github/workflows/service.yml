@@ -16,10 +16,12 @@ on:
             default: ''
         
 jobs:
-  service:
+  callServiceLib:
     uses: ./.github/workflows/service-lib.yml
     with:
       Universe: ${{inputs.Universe}}
       Version: ${{inputs.Version}}
       DnsSuffix: ${{inputs.DnsSuffix}}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 

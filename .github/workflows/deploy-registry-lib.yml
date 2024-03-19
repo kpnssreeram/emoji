@@ -5,6 +5,9 @@ on:
       Universe:
         required: true
         type: string
+      secrets:
+        SLACK_WEBHOOK_URL:
+            required: true
 permissions:
     id-token: write
     contents: read
@@ -59,3 +62,13 @@ jobs:
             bv:nexus:datatype=intellectualproperty        \
             bv:nexus:env="${{ env.ENVNAME }}"                         \
           --region ${{ env.AWS_REGION }}
+          
+      - name: Alert to slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ always() }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,job,workflow
+          author_name: The workflow at ${{github.repository}} on branch ${{github.ref_name}} is ${{job.status}}
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

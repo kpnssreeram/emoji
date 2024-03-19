@@ -13,7 +13,7 @@ on:
             default: ''
         
 jobs:
-  call-internal-alb-lib:
+  callInternalAlbLib:
     uses: ./.github/workflows/internal-alb-lib.yml
     with:
       Universe: ${{inputs.Universe}}

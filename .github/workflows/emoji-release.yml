@@ -43,10 +43,12 @@ jobs:
 #         run:
 #             echo ${{ steps.get-dev-version.outputs.dev-version }}
 
-  call-emoji-release:
+  callEmojiRelease:
     uses: ./.github/workflows/emoji-release-lib.yml
     with:
       Universe: ${{inputs.Universe}}
       ReleaseVersion: ${{inputs.ReleaseVersion}}
       DevelopmentVersion: ${{ inputs.DevelopmentVersion }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       

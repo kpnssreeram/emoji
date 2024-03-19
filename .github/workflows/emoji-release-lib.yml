@@ -11,39 +11,50 @@ on:
             Universe:
                 required: true
                 type: string
-
+        secrets:
+          SLACK_WEBHOOK_URL:
+              required: true
 jobs:
-    Emoji-release-lib:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - name: Import Environment File
-              run: |
-                if [ "${{ inputs.vpc }}" == "ci" ] || [ "${{ inputs.vpc }}" == "cert" ] || [ "${{ inputs.vpc }}" == "anon" ]; then
-                  echo "ENVFILE=Environments.env" >> $GITHUB_ENV
-                else
-                  echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
-                fi
-            - name: Set up JDK
-              uses: actions/setup-java@v2
-              with:
-                java-version: '11'
-                distribution: 'temurin'
-            
-            - name: Set up Maven
-              uses: stCarolas/setup-maven@v4
-              with:
-                maven-version: '3.6.3'
-            
-            - name: Release
-              run: |
-                mvn compile -e -Dresume=false                    \
-                -DreleaseProfiles=docker                          \
-                -DreleaseVersion=${{inputs.ReleaseVersion}}         \
-                -DdevelopmentVersion=${{inputs.DevelopmentVersion}} \
-                -Darguments="-DskipTests                          \
-                -DskipITs                                         \
-                -Ddependency-check.skip=true                      \
-                -Dmaven.javadoc.skip=true"                        \
-                release:clean release:prepare release:perform
+  Emoji-release-lib:
+      runs-on: ubuntu-latest
+      steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+          - name: Import Environment File
+            run: |
+              if [ "${{ inputs.vpc }}" == "ci" ] || [ "${{ inputs.vpc }}" == "cert" ] || [ "${{ inputs.vpc }}" == "anon" ]; then
+                echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+              else
+                echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+              fi
+          - name: Set up JDK
+            uses: actions/setup-java@v2
+            with:
+              java-version: '11'
+              distribution: 'temurin'
+          
+          - name: Set up Maven
+            uses: stCarolas/setup-maven@v4
+            with:
+              maven-version: '3.6.3'
+          
+          - name: Release
+            run: |
+              mvn compile -e -Dresume=false                    \
+              -DreleaseProfiles=docker                          \
+              -DreleaseVersion=${{inputs.ReleaseVersion}}         \
+              -DdevelopmentVersion=${{inputs.DevelopmentVersion}} \
+              -Darguments="-DskipTests                          \
+              -DskipITs                                         \
+              -Ddependency-check.skip=true                      \
+              -Dmaven.javadoc.skip=true"                        \
+              release:clean release:prepare release:perform
+          - name: Alert to slack
+            uses: 8398a7/action-slack@v3
+            if: ${{ always() }}
+            with:
+                status: ${{ job.status }}
+                fields: repo,message,job,workflow
+                author_name: The workflow at ${{github.repository}} on branch ${{github.ref_name}} is ${{job.status}}
+            env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

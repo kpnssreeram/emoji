@@ -9,7 +9,9 @@ on:
         options: [ci, cert, anon, uat, bazaar]
         required: true
 jobs:
-  call-Libregistry:
+  callDeployRegistryLib:
     uses: ./.github/workflows/deploy-registry-lib.yml
     with:
       Universe: ${{inputs.Universe}}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
