@@ -4,7 +4,7 @@ on:
     inputs:
         ReleaseVersion:
             description: 'Release version'
-            default: ${{ steps.increment-release-version.outputs.incremented-version }}
+            default: ${{ steps.get-dev-version.outputs.dev-version }}
             required: true
         DevelopmentVersion:
             description: 'Development version'
