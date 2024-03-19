@@ -2,7 +2,7 @@ name: Docker registry-lib
 on:
   workflow_call:
     inputs:
-      vpc:
+      Universe:
         required: true
         type: string
 permissions:
@@ -18,10 +18,12 @@ jobs:
 
       - name: Import Environment File
         run: |
-          if [ "${{ inputs.vpc }}" == "ci" ] || [ "${{ inputs.vpc }}" == "cert" ] || [ "${{ inputs.vpc }}" == "anon" ]; then
+          if [ "${{ inputs.Universe }}" == "ci" ] || [ "${{ inputs.Universe }}" == "cert" ] || [ "${{ inputs.Universe }}" == "anon" ]; then
             echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+            echo "ENVNAME=QA" >> $GITHUB_ENV
           else
             echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+            echo "ENVNAME=PROD" >> $GITHUB_ENV
           fi
 
       - name: Import Environment Variables
@@ -47,7 +49,7 @@ jobs:
           --no-fail-on-empty-changeset                    \
           --tags                                          \
             bv:nexus:team="${{ env.TEAM }}"                       \
-            bv:nexus:vpc="${{ inputs.vpc }}"                         \
+            bv:nexus:vpc="${{ env.ENVNAME }}"                         \
             bv:system=emodb                               \
             bv:nexus:service=emoji                        \
             bv:nexus:role=docker-registry                 \
@@ -55,5 +57,5 @@ jobs:
             bv:nexus:access=none                          \
             bv:nexus:costcenter="${{ env.TEAM }}"                 \
             bv:nexus:datatype=intellectualproperty        \
-            bv:nexus:env="${{ inputs.vpc }}"                         \
+            bv:nexus:env="${{ env.ENVNAME }}"                         \
           --region ${{ env.AWS_REGION }}

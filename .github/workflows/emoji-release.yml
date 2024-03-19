@@ -33,5 +33,5 @@ jobs:
     uses: ./.github/workflows/emoji-release-lib.yml
     with:
     #   vpc: ${{inputs.vpc}}
-       dev-version: ${{ steps.get-dev-version.outputs.dev-version }}
-       release-version: ${{ steps.get-release-version.outputs.release-version }}
+      DevelopmentVersion: ${{ needs.read.outputs.dev-version }}
+      ReleaseVersion: ${{ needs.read.outputs.release-version }}

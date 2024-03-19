@@ -2,13 +2,14 @@ name: Deploying docker registry
 on:
   workflow_dispatch:
     inputs:
-        vpc:
-            required: true
-            default: qa
-            type: choice
-            options: [qa,prod]
+      Universe:
+        description: 'Universe to deploy'
+        default: 'ci'
+        type: choice
+        options: [ci, cert, anon, uat, bazaar]
+        required: true
 jobs:
   call-Libregistry:
     uses: ./.github/workflows/deploy-registry-lib.yml
     with:
-      vpc: ${{inputs.vpc}}
+      Universe: ${{inputs.Universe}}
