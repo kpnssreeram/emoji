@@ -2,12 +2,15 @@ name: emoji-release
 on:
   workflow_dispatch:
     inputs:
-        Universe:
-            description: 'Universe to ${{github.repository}} deploy '
-            default: 'ci'
-            type: choice
-            options: [ci, cert, anon, uat, bazaar]
+        ReleaseVersion:
+            description: 'Release version'
+            default: ${{ steps.increment-release-version.outputs.incremented-version }}
             required: true
+        DevelopmentVersion:
+            description: 'Development version'
+            default: ''
+            required: true
+        
         
 jobs:
   read:
