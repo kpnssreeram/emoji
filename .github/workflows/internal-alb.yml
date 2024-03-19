@@ -4,7 +4,7 @@ on:
     inputs:
         Universe:
             description: 'Universe to deploy'
-            default: 'cert'
+            default: 'ci'
             type: choice
             options: [ci, cert, anon, uat, bazaar]
             required: true
