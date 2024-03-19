@@ -2,7 +2,7 @@ name: Deploying docker registry
 on:
   workflow_dispatch:
     inputs:
-      Universe:
+       Universe:
         description: 'Universe to deploy'
         default: 'ci'
         type: choice

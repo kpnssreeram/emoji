@@ -5,9 +5,9 @@ on:
       Universe:
         required: true
         type: string
-      secrets:
-        SLACK_WEBHOOK_URL:
-            required: true
+    secrets:
+      SLACK_WEBHOOK_URL:
+          required: true
 permissions:
     id-token: write
     contents: read
