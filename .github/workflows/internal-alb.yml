@@ -3,11 +3,13 @@ on:
   workflow_dispatch:
     inputs:
         Universe:
-            description: 'Universe to ${{github.repository}} deploy'
-            default: 'ci'
-            type: choice
-            options: [ci, cert, anon, uat, bazaar]
+            description: 'Universe to deploy'
+            default: ${{readFile('versions.txt')}}
             required: true
+        default: $UNIVERSE_VERSION
+          env:
+            UNIVERSE_VERSION: ${{ github.event.inputs.Universe }}
+
         DnsSuffix:
             description: Use for testing purposes. Leave blank for real universes
             default: ''

@@ -1,0 +1,2 @@
+ReleaseVersion=1.0.0
+DevelopmentVersion=1.0.1-SNAPSHOT
