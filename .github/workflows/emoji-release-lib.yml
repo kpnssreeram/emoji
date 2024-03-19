@@ -4,13 +4,15 @@ on:
         inputs:
             ReleaseVersion:
                 description: 'Release version'
+                default: ${{ReleaseVersion}}
                 required: true
             DevelopmentVersion:
                 description: 'Development version'
+                default:
                 required: true
-            Universe:
-                required: true
-                type: string
+            # Universe:
+            #     required: true
+            #     type: string
 
 jobs:
     Emoji-release-lib:

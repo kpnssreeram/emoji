@@ -32,6 +32,7 @@ jobs:
     needs: read
     uses: ./.github/workflows/emoji-release-lib.yml
     with:
-    #   vpc: ${{inputs.vpc}}
-      DevelopmentVersion: ${{ needs.read.outputs.dev-version }}
+    #   Universe: ${{inputs.Universe}}
       ReleaseVersion: ${{ needs.read.outputs.release-version }}
+      DevelopmentVersion: ${{ needs.read.outputs.dev-version }}
+      
