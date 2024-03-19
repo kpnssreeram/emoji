@@ -13,7 +13,8 @@ on:
         type: string
     secrets:
       SLACK_WEBHOOK_URL:
-          required: true
+        required: true
+
 permissions:
   id-token: write
   contents: read
@@ -29,11 +30,11 @@ jobs:
       - name: Import Environment File
         run: |
           if [ "${{ inputs.Universe }}" == "ci" ] || [ "${{ inputs.Universe }}" == "cert" ] || [ "${{ inputs.Universe }}" == "anon" ]; then
-              echo "ENVFILE=Environments.env" >> $GITHUB_ENV
-              echo "ENVNAME=qa" >> $GITHUB_ENV
+            echo "ENVFILE=Environments.env" >> $GITHUB_ENV
+            echo "ENVNAME=qa" >> $GITHUB_ENV
           else
-              echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
-              echo "ENVNAME=prod" >> $GITHUB_ENV
+            echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
+            echo "ENVNAME=prod" >> $GITHUB_ENV
           fi
 
       - name: Import Environment Variables
@@ -45,42 +46,42 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', env.ENVNAME)] }}:role/emojigitrole
-          role-session-name: deploy-emoji-service
+          role-to-assume: arn:aws:iam::${{ env[format('aws_environment_{0}', env.ENVNAME)] }}:role/emojigitrole
+          role-session-name: emojiServiceSession
           aws-region: ${{ env.AWS_REGION }}
   
       - name: Deploying emoji service
         run: |
-            export AWS_RETRY_MODE="standard"
-            export AWS_MAX_ATTEMPTS=15
+          export AWS_RETRY_MODE="standard"
+          export AWS_MAX_ATTEMPTS=15
         
-            if [ "${Version}" == "latest" ]; then
-                Version=$(git tag -l | grep emoji | cut -d'-' -f2 | sort -V | tail -1)
-            fi
+          if [ "${Version}" == "latest" ]; then
+            Version=$(git tag -l | grep emoji | cut -d'-' -f2 | sort -V | tail -1)
+          fi
         
-            aws cloudformation deploy \
-                --stack-name "${{ inputs.Universe }}-emoji-app-test${{ inputs.DnsSuffix }}" \
-                --template-file ops/cfn/service.cfn.yml \
-                --parameter-overrides \
-                    Universe=${{ inputs.Universe }} \
-                    Image="549050352176.dkr.ecr.us-east-1.amazonaws.com/emodb/emoji-test: ${{ inputs.Version }}" \
-                    InternalTargetGroup=${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb:InternalTargetGroup \
-                    DesiredContainerCount=1 \
-                --capabilities CAPABILITY_IAM \
-                --no-fail-on-empty-changeset \
-                --tags \
-                    bv:nexus:team="${{ env.TEAM }}" \
-                    bv:nexus:vpc="${{ env.ENVNAME }}" \
-                    bv:system=emodb \
-                    bv:nexus:service=emoji \
-                    bv:nexus:role=app \
-                    bv:nexus:owner="${{ env.TEAM }}" \
-                    bv:nexus:access=none \
-                    bv:nexus:costcenter="${{ env.TEAM }}" \
-                    bv:nexus:datatype=client+personal \
-                    bv:nexus:env="${{ env.ENVNAME }}" \
-                    universe="${{ inputs.Universe }}" \
-                --region ${{ env.AWS_REGION }}
+          aws cloudformation deploy \
+            --stack-name "${{ inputs.Universe }}-emoji-app-test${{ inputs.DnsSuffix }}" \
+            --template-file ops/cfn/service.cfn.yml \
+            --parameter-overrides \
+              Universe=${{ inputs.Universe }} \
+              Image="549050352176.dkr.ecr.us-east-1.amazonaws.com/emodb/emoji-test: ${{ inputs.Version }}" \
+              InternalTargetGroup=${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb:InternalTargetGroup \
+              DesiredContainerCount=1 \
+            --capabilities CAPABILITY_IAM \
+            --no-fail-on-empty-changeset \
+            --tags \
+              bv:nexus:team="${{ env.TEAM }}" \
+              bv:nexus:vpc="${{ env.ENVNAME }}" \
+              bv:system=emodb \
+              bv:nexus:service=emoji \
+              bv:nexus:role=app \
+              bv:nexus:owner="${{ env.TEAM }}" \
+              bv:nexus:access=none \
+              bv:nexus:costcenter="${{ env.TEAM }}" \
+              bv:nexus:datatype=client+personal \
+              bv:nexus:env="${{ env.ENVNAME }}" \
+              universe="${{ inputs.Universe }}" \
+            --region ${{ env.AWS_REGION }}
 
       - name: Alert to slack
         uses: 8398a7/action-slack@v3
@@ -88,9 +89,6 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,job,workflow
-          author_name: The workflow at ${{github.repository}} on branch ${{github.ref_name}} is ${{job.status}}
+          author_name: The workflow at ${{ github.repository }} on branch ${{ github.ref_name }} is ${{ job.status }}
         env:
-            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-
-          
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

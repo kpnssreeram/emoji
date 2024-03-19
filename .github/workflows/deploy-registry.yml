@@ -12,6 +12,6 @@ jobs:
   callDeployRegistryLib:
     uses: ./.github/workflows/deploy-registry-lib.yml
     with:
-      Universe: ${{inputs.Universe}}
+      Universe: ${{ inputs.Universe }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

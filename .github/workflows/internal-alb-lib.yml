@@ -9,8 +9,8 @@ on:
         required: false
         type: string
     secrets:
-        SLACK_WEBHOOK_URL:
-            required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 permissions:
   id-token: write
   contents: read
@@ -41,8 +41,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env[format('AWS_ENVIRONMENT_{0}', env.ENVNAME)] }}:role/emojigitrole
-          role-session-name: deploy-internal-alb
+          role-to-assume: arn:aws:iam::${{ env[format('aws_environment_{0}', env.ENVNAME)] }}:role/emojigitrole
+          role-session-name: emojiDeployInternal-albSession
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy Secrets
@@ -77,4 +77,4 @@ jobs:
           fields: repo,message,job,workflow
           author_name: The workflow at ${{github.repository}} on branch ${{github.ref_name}} is ${{job.status}}
         env:
-            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -2,21 +2,20 @@ name: Deploy internal load balancer
 on:
   workflow_dispatch:
     inputs:
-        Universe:
-            description: 'Universe to deploy'
-            default: 'ci'
-            type: choice
-            options: [ci, cert, anon, uat, bazaar]
-            required: true
-        DnsSuffix:
-            description: Use for testing purposes. Leave blank for real universes
-            default: ''
-        
+      Universe:
+        description: 'Universe to deploy'
+        default: 'ci'
+        type: choice
+        options: [ci, cert, anon, uat, bazaar]
+        required: true
+      DnsSuffix:
+        description: 'Use for testing purposes. Leave blank for real universes'
+        default: ''
 jobs:
   callInternalAlbLib:
     uses: ./.github/workflows/internal-alb-lib.yml
     with:
-      Universe: ${{inputs.Universe}}
-      DnsSuffix: ${{inputs.DnsSuffix}}
+      Universe: ${{ inputs.Universe }}
+      DnsSuffix: ${{ inputs.DnsSuffix }}
     secrets:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

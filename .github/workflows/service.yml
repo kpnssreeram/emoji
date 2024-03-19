@@ -2,26 +2,25 @@ name: Deploy emoji service
 on:
   workflow_dispatch:
     inputs:
-        Universe:
-            description: 'Universe to deploy'
-            default: 'ci'
-            type: choice
-            options: [ci, cert, anon, uat, bazaar]
-            required: true
-        Version:
-            description: Emoji Docker Image Tag
-            default: 'latest'
-        DnsSuffix:
-            description: Use for testing purposes. Leave blank for real universe
-            default: ''
-        
+      Universe:
+        description: 'Universe to deploy'
+        default: 'ci'
+        type: choice
+        options: [ci, cert, anon, uat, bazaar]
+        required: true
+      Version:
+        description: Emoji Docker Image Tag
+        default: 'latest'
+      DnsSuffix:
+        description: Use for testing purposes. Leave blank for real universe
+        default: ''
+
 jobs:
   callServiceLib:
     uses: ./.github/workflows/service-lib.yml
     with:
-      Universe: ${{inputs.Universe}}
-      Version: ${{inputs.Version}}
-      DnsSuffix: ${{inputs.DnsSuffix}}
+      Universe: ${{ inputs.Universe }}
+      Version: ${{ inputs.Version }}
+      DnsSuffix: ${{ inputs.DnsSuffix }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
