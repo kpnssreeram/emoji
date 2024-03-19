@@ -8,9 +8,9 @@ on:
             DevelopmentVersion:
                 required: true
                 type: string
-            # Universe:
-            #     required: true
-            #     type: string
+            Universe:
+                required: true
+                type: string
 
 jobs:
     Emoji-release-lib:
@@ -25,13 +25,23 @@ jobs:
                 else
                   echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
                 fi
-
+            - name: Set up JDK
+              uses: actions/setup-java@v2
+              with:
+                java-version: '11'
+                distribution: 'temurin'
+            
+            - name: Set up Maven
+              uses: stCarolas/setup-maven@v4
+              with:
+                maven-version: '3.6.3'
+            
             - name: Release
               run: |
                 mvn compile -e -Dresume=false                    \
                 -DreleaseProfiles=docker                          \
-                -DreleaseVersion=${params.ReleaseVersion}         \
-                -DdevelopmentVersion=${params.DevelopmentVersion} \
+                -DreleaseVersion=${{inputs.ReleaseVersion}}         \
+                -DdevelopmentVersion=${{inputs.DevelopmentVersion}} \
                 -Darguments="-DskipTests                          \
                 -DskipITs                                         \
                 -Ddependency-check.skip=true                      \

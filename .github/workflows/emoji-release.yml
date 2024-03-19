@@ -3,11 +3,12 @@ on:
   workflow_dispatch:
     inputs:
         Universe:
-            description: 'Universe to deploy '
+            description: 'Universe to ${{github.repository}} deploy '
             default: 'ci'
             type: choice
             options: [ci, cert, anon, uat, bazaar]
             required: true
+        
 jobs:
   read:
     runs-on: ubuntu-latest
@@ -39,7 +40,7 @@ jobs:
     needs: read
     uses: ./.github/workflows/emoji-release-lib.yml
     with:
-    #   Universe: ${{inputs.Universe}}
+      Universe: ${{inputs.Universe}}
       ReleaseVersion: ${{ needs.read.outputs.release-version }}
       DevelopmentVersion: ${{ needs.read.outputs.dev-version }}
       
