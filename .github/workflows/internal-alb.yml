@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
         Universe:
-            description: 'Universe to deploy'
+            description: 'Universe to ${{github.repository}} deploy'
             default: 'ci'
             type: choice
             options: [ci, cert, anon, uat, bazaar]
