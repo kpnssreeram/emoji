@@ -1,15 +1,13 @@
 name: emoji-release-lib
 on:
-    workflow_dispatch:
+    workflow_call:
         inputs:
             ReleaseVersion:
-                description: 'Release version'
-                default: ${{ReleaseVersion}}
                 required: true
+                type: string
             DevelopmentVersion:
-                description: 'Development version'
-                default:
                 required: true
+                type: string
             # Universe:
             #     required: true
             #     type: string

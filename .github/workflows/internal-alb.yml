@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
         Universe:
-            description: 'Universe to deploy'
-            default: 'ci'
-            type: choice
-            options: [ci, cert, anon, uat, bazaar]
-            required: true
+          description: 'Universe to deploy'
+          default: ${{ github.ref_name }}
+          type: choice
+          options: [ci, cert, anon, uat, bazaar]
+          required: true
         DnsSuffix:
             description: Use for testing purposes. Leave blank for real universes
             default: ''
