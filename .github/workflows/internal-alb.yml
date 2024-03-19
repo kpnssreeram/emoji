@@ -4,12 +4,10 @@ on:
     inputs:
         Universe:
             description: 'Universe to deploy'
-            default: ${{readFile('versions.txt')}}
+            default: 'ci'
+            type: choice
+            options: [ci, cert, anon, uat, bazaar]
             required: true
-        default: $UNIVERSE_VERSION
-          env:
-            UNIVERSE_VERSION: ${{ github.event.inputs.Universe }}
-
         DnsSuffix:
             description: Use for testing purposes. Leave blank for real universes
             default: ''
