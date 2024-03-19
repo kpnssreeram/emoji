@@ -9,7 +9,7 @@ on:
           options: [ci, cert, anon, uat, bazaar]
           required: true
         DnsSuffix:
-            description: Use for testing purposes. Leave blank for real universes
+            description: Use for testing purposes. Leave blank jjfor real universes
             default: ''
         
 jobs:
