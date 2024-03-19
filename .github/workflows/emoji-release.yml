@@ -28,7 +28,10 @@ jobs:
         run:
             echo ${{ steps.get-dev-version.outputs.dev-version }}
 
-#   call-emoji-release:
-#     uses: ./.github/workflows/emoji-release-lib.yml
-#     with:
-#       vpc: ${{inputs.vpc}}
+  call-emoji-release:
+    needs: read
+    uses: ./.github/workflows/emoji-release-lib.yml
+    with:
+    #   vpc: ${{inputs.vpc}}
+       dev-version: ${{ steps.get-dev-version.outputs.dev-version }}
+       release-version: ${{ steps.get-release-version.outputs.release-version }}
