@@ -1,18 +1,11 @@
 name: emoji-release
 on:
   push:
-
 jobs:
   read:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11
-          distribution: 'temurin'
       - name: Install xmllint
         run: sudo apt-get update && sudo apt-get install -y libxml2-utils
       - name: Get Release Version
@@ -20,21 +13,11 @@ jobs:
         run: |
           RELEASE_VERSION=$(xmllint --xpath "//*[local-name()='parent']/*[local-name()='version']/text()" pom.xml | sed 's/-SNAPSHOT//g')
           echo "release-version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
-      
-      - name: Print
-        run:
-            echo ${{ steps.get-release-version.outputs.release-version }}
-
       - name: Get Major Version
         id: get-major-version
         run: |
           MAJOR_VERSION=$(echo "${{ steps.get-release-version.outputs.release-version }}" | cut -d'.' -f1)
           echo "major-version=$MAJOR_VERSION" >> $GITHUB_OUTPUT
-
-      - name: print
-        run:
-            echo ${{ steps.get-major-version.outputs.major-version }}
-
       - name: Get Development Version
         id: get-dev-version
         run: |
@@ -45,8 +28,7 @@ jobs:
         run:
             echo ${{ steps.get-dev-version.outputs.dev-version }}
 
-
-#   call-Libregistry:
-#     uses: ./.github/workflows/deploy-registry-lib.yml
+#   call-emoji-release:
+#     uses: ./.github/workflows/emoji-release-lib.yml
 #     with:
 #       vpc: ${{inputs.vpc}}
