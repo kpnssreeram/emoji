@@ -8,6 +8,11 @@ on:
         type: choice
         options: [ci, cert, anon, uat, bazaar]
         required: true
+      AWS_REGION:
+        description: 'AWS region to deploy'
+        default: 'us-east-1'
+        type: choice
+        options: [us-east-1]
 jobs:
   callDeployRegistryLib:
     uses: ./.github/workflows/deploy-registry-lib.yml
