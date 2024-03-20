@@ -11,11 +11,17 @@ on:
       DnsSuffix:
         description: 'Use for testing purposes. Leave blank for real universes'
         default: ''
+      AWS_REGION:
+        description: 'AWS region to deploy'
+        default: 'us-east-1'
+        type: choice
+        options: [us-east-1]
 jobs:
   callInternalAlbLib:
     uses: ./.github/workflows/internal-alb-lib.yml
     with:
       Universe: ${{ inputs.Universe }}
       DnsSuffix: ${{ inputs.DnsSuffix }}
+      AWS_REGION: ${{ inputs.AWS_REGION }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

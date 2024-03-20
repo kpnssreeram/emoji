@@ -1,4 +1,4 @@
-name: Deploying docker registry
+name: Deploying registry
 on:
   workflow_dispatch:
     inputs:

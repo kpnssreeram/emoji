@@ -1,4 +1,4 @@
-name: Docker registry-lib
+name: Deploy registry-lib
 on:
   workflow_call:
     inputs:
