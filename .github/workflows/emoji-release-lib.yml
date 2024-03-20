@@ -38,14 +38,14 @@ jobs:
           maven-version: '3.6.3'
       - name: Release
         run: |
-          mvn compile -e -Dresume=false                    \
-          -DreleaseProfiles=docker                          \
+          mvn compile -e -Dresume=false                         \
+          -DreleaseProfiles=docker                              \
           -DreleaseVersion=${{ inputs.ReleaseVersion }}         \
           -DdevelopmentVersion=${{ inputs.DevelopmentVersion }} \
-          -Darguments="-DskipTests                          \
-          -DskipITs                                         \
-          -Ddependency-check.skip=true                      \
-          -Dmaven.javadoc.skip=true"                        \
+          -Darguments="-DskipTests                              \
+          -DskipITs                                             \
+          -Ddependency-check.skip=true                          \
+          -Dmaven.javadoc.skip=true"                            \
           release:clean release:prepare release:perform
       - name: Alert to slack
         uses: 8398a7/action-slack@v3
