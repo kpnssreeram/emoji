@@ -11,6 +11,9 @@ on:
       DnsSuffix:
         required: false
         type: string
+      AWS_REGION:
+        required: true
+        type: string
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
@@ -48,7 +51,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ env[format('aws_environment_{0}', env.ENVNAME)] }}:role/emojigitrole
           role-session-name: emojiServiceSession
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ inputs.AWS_REGION }}
   
       - name: Deploying emoji service
         run: |
@@ -81,7 +84,7 @@ jobs:
               bv:nexus:datatype=client+personal                                                                        \
               bv:nexus:env="${{ env.ENVNAME }}"                                                                        \
               universe="${{ inputs.Universe }}"                                                                        \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ inputs.AWS_REGION }}
 
       - name: Alert to slack
         uses: 8398a7/action-slack@v3

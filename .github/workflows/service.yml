@@ -14,6 +14,11 @@ on:
       DnsSuffix:
         description: Use for testing purposes. Leave blank for real universe
         default: ''
+      AWS_REGION:
+        description: 'AWS region to deploy'
+        default: 'us-east-1'
+        type: choice
+        options: [us-east-1]
 
 jobs:
   callServiceLib:
@@ -22,5 +27,6 @@ jobs:
       Universe: ${{ inputs.Universe }}
       Version: ${{ inputs.Version }}
       DnsSuffix: ${{ inputs.DnsSuffix }}
+      AWS_REGION: ${{ inputs.AWS_REGION }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
