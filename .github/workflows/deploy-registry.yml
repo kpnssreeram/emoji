@@ -18,5 +18,6 @@ jobs:
     uses: ./.github/workflows/deploy-registry-lib.yml
     with:
       Universe: ${{ inputs.Universe }}
+      AWS_REGION: ${{ inputs.AWS_REGION }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
