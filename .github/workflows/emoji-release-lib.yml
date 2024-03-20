@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Import Environment File
         run: |
-          if [ "${{ inputs.vpc }}" == "ci" ] || [ "${{ inputs.vpc }}" == "cert" ] || [ "${{ inputs.vpc }}" == "anon" ]; then
+          if [ "${{ inputs.Universe }}" == "ci" ] || [ "${{ inputs.Universe }}" == "cert" ] || [ "${{ inputs.Universe }}" == "anon" ]; then
             echo "ENVFILE=Environments.env" >> $GITHUB_ENV
           else
             echo "ENVFILE=ProdEnvironments.env" >> $GITHUB_ENV
