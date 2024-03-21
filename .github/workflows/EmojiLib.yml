@@ -41,12 +41,12 @@ jobs:
           envFile: '${{ env.ENVFILE }}'
           expand: 'true'
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ env[format('aws_environment_{0}', env.ENVNAME)] }}:role/emojigitrole
-          role-session-name: emojiDockerSession
-          aws-region: ${{ inputs.AWS_REGION }}
+    #   - name: Configure AWS Credentials
+    #     uses: aws-actions/configure-aws-credentials@v1
+    #     with:
+    #       role-to-assume: arn:aws:iam::${{ env[format('aws_environment_{0}', env.ENVNAME)] }}:role/emojigitrole
+    #       role-session-name: emojiDockerSession
+    #       aws-region: ${{ inputs.AWS_REGION }}
 
       - name: aws commands run
         run: |
