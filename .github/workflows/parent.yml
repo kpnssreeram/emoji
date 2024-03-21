@@ -27,3 +27,4 @@ jobs:
         run: |
             ls
             cd external-scripts
+            ls
