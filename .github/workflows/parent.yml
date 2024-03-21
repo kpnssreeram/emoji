@@ -16,7 +16,7 @@ jobs:
 
       - name: Fetch data (deploy label)
         run: |
-            label=$(python ./external-scripts/B.py getDeployLabelByUniverse "ci")
+            label=$(python ./B.py getDeployLabelByUniverse "ci")
             echo "Deploy Label: $label"
 
     #   - name: repository check
