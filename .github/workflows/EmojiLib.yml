@@ -82,4 +82,4 @@ jobs:
                   bv:nexus:costcenter=${{ env.TEAM }}     \
                   bv:nexus:datatype=${{ env.DATATYPE }}  \
                   bv:nexus:env=${{ env.ENVNAME }}        \
-          fi
+           fi
