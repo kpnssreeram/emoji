@@ -12,5 +12,4 @@ jobs:
           source ./B.sh
           
           # Call the function
-          data=$(getDeployLabelByUniverse "ci")
-          echo "Data: $data"
+          echo "Data: $(getDeployLabelByUniverse "ci")"
