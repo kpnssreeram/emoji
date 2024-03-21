@@ -50,7 +50,7 @@ jobs:
 
       - name: aws commands run
         run: |
-            if [ "${{ inputs.tag }}" == "deploydocker" ]; then
+            if [ "${{ inputs.tags }}" == "deploydocker" ]; then
                 aws cloudformation deploy                       \
                 --stack-name emoji-docker-registry-test         \
                 --template-file ops/cfn/docker-registry.cfn.yml \
