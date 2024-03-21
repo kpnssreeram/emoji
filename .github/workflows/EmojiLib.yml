@@ -44,8 +44,24 @@ jobs:
       - name: aws commands run
         run: |
             if [ "${{ inputs.tags }}" == "deploydocker" ]; then
-            aws cloudformation deploy --stack-name emoji-docker-registry-test --template-file ops/cfn/docker-registry.cfn.yml --parameter-overrides ECRRepositoryName=emodb/emoji-test --no-fail-on-empty-changeset --tags bv:nexus:team="${{ env.TEAM }}" bv:nexus:vpc="${{ env.ENVNAME }}" bv:system=emodb bv:nexus:service=emoji bv:nexus:role=docker-registry bv:nexus:owner="${{ env.TEAM }}" bv:nexus:access=none bv:nexus:costcenter="${{ env.TEAM }}" bv:nexus:datatype=intellectualproperty bv:nexus:env="${{ env.ENVNAME }}" --region ${{ inputs.AWS_REGION }}
-
+                aws cloudformation deploy \
+                --stack-name emoji-docker-registry-test \
+                --template-file ops/cfn/docker-registry.cfn.yml \
+                --parameter-overrides ECRRepositoryName=emodb/emoji-test \
+                --no-fail-on-empty-changeset \
+                --tags \
+                    bv:nexus:team="${{ env.TEAM }}" \
+                    bv:nexus:vpc="${{ env.ENVNAME }}" \
+                    bv:system=emodb \
+                    bv:nexus:service=emoji \
+                    bv:nexus:role=docker-registry \
+                    bv:nexus:owner="${{ env.TEAM }}" \
+                    bv:nexus:access=none \
+                    bv:nexus:costcenter="${{ env.TEAM }}" \
+                    bv:nexus:datatype=intellectualproperty \
+                    bv:nexus:env="${{ env.ENVNAME }}" \
+                --region ${{ inputs.AWS_REGION }}
             else
-                echo "hello world"      
+                echo "hello world"
             fi
+        
