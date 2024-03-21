@@ -22,3 +22,6 @@ jobs:
           # Call the function
           data=$(getDeployLabelByUniverse "ci")
           echo "Data: $data"
+
+      - name: repository check
+        run: ls
