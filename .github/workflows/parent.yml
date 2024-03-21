@@ -24,4 +24,6 @@ jobs:
           echo "Data: $data"
 
       - name: repository check
-        run: ls
+        run: |
+            ls
+            cd external-scripts
