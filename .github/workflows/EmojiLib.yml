@@ -71,6 +71,8 @@ jobs:
               --no-fail-on-empty-changeset                \
               --parameter-overrides                       \
                   Universe=${{ inputs.Universe }}         \
+                  AccessToken=${{ secrets.Access_Token }} \
+                  ApiKey=${{ secrets.API_PASSWORD }}      \
               --tags                                      \
                   bv:nexus:team=${{ env.TEAM }}           \
                   bv:nexus:vpc=${{ env.ENVNAME }}         \
