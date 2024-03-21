@@ -1,0 +1,16 @@
+name: Fetch Data
+on: workflow_dispatch
+jobs:
+  fetching:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch data
+        run: |
+          # Source the B.sh script
+          source ./B.sh
+          
+          # Call the function
+          data=$(getDeployLabelByUniverse "ci")
+          echo "Data: $data"
