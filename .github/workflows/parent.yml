@@ -1,15 +1,24 @@
 name: Fetch Data
 on: workflow_dispatch
+
 jobs:
   fetching:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main repository
         uses: actions/checkout@v2
+
+      - name: Checkout repository with B.sh
+        uses: actions/checkout@v3
+        with:
+          repository: kpnssreeram/Library
+          path: external-scripts
 
       - name: Fetch data
         run: |
           # Source the B.sh script
-          source kpnssreeram/Library/B.sh
+          source ./external-scripts/B.sh
+          
           # Call the function
-          echo "Data: $(getDeployLabelByUniverse "ci")"
+          data=$(getDeployLabelByUniverse "ci")
+          echo "Data: $data"
