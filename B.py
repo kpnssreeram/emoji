@@ -18,23 +18,32 @@ def getAccountIdByUniverse(universe):
     }
     return switch.get(universe, 'default')
 
-# This code will only run if the script is executed directly (not imported as a module)
+def getTags(tag_type):
+    tags = {
+        'team': 'emodb-dev@bazaarvoice.com',
+        'datatype': 'client+personal',
+        'service': 'emoji'
+    }
+    return tags.get(tag_type, 'default')
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 3:
-        print("Usage: B.py <function_name> <universe>")
+        print("Usage: B.py <function_name> <argument>")
         sys.exit(1)
 
     function_name = sys.argv[1]
-    universe = sys.argv[2]
+    argument = sys.argv[2]
 
     functions = {
         'getVpcByUniverse': getVpcByUniverse,
-        'getAccountIdByUniverse': getAccountIdByUniverse
+        'getAccountIdByUniverse': getAccountIdByUniverse,
+        'getTags': getTags
     }
 
     if function_name in functions:
-        result = functions[function_name](universe)
+        result = functions[function_name](argument)
         print(result)
     else:
         print(f"Invalid function name: {function_name}")
