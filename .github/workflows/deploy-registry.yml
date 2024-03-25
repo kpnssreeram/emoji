@@ -49,22 +49,22 @@ jobs:
       - name: Deploy registry
         run: |
             aws cloudformation deploy                                               \
-            --stack-name emoji-docker-registry-test                                 \
-            --template-file cd ops/cfn/docker-registry.cfn.yml                         \
+            --stack-name emoji-docker-registry                                      \
+            --template-file ops/cfn/docker-registry.cfn.yml                         \
             --parameter-overrides                                                   \
-                ECRRepositoryName=emodb/emoji-test                                      \
-                --no-fail-on-empty-changeset                                            \
+                ECRRepositoryName=emodb/emoji                                       \
+                --no-fail-on-empty-changeset                                        \
             --tags                                                                  \
-                bv:nexus:team=$(python ./EmojiLib.py getTags "team")          \
-                bv:nexus:vpc=${{env.EnvTag}}                                            \
-                bv:system=emodb                                                         \
-                bv:nexus:service=$(python ./EmojiLib.py getTags "service")    \
-                bv:nexus:role=docker-registry                                           \
-                bv:nexus:owner=$(python ./EmojiLib.py getTags "team")         \
-                bv:nexus:access=none                                                    \
-                bv:nexus:costcenter=$(python ./EmojiLib.py getTags "team")    \
-                bv:nexus:datatype=intellectualproperty                                  \
-                bv:nexus:env=${{env.EnvTag}}                                         \
+                bv:nexus:team=$(python ./EmojiLib.py getTags "team")                \
+                bv:nexus:vpc=${{env.EnvTag}}                                        \
+                bv:system=emodb                                                     \
+                bv:nexus:service=$(python ./EmojiLib.py getTags "service")          \
+                bv:nexus:role=docker-registry                                       \
+                bv:nexus:owner=$(python ./EmojiLib.py getTags "team")               \
+                bv:nexus:access=none                                                \
+                bv:nexus:costcenter=$(python ./EmojiLib.py getTags "team")          \
+                bv:nexus:datatype=intellectualproperty                              \
+                bv:nexus:env=${{env.EnvTag}}                                        \
             --region ${{inputs.AWS_REGION}}
 
       - name: Alert to slack

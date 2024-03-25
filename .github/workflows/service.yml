@@ -65,28 +65,28 @@ jobs:
                 Version=$(git tag -l | grep emoji | cut -d'-' -f2 | sort -V | tail -1)
             fi
 
-            aws cloudformation deploy                                                                                    \
-                --stack-name "${{ inputs.Universe }}-emoji-app-test${{ inputs.DnsSuffix }}"                                \
-                --template-file cd ops/cfn/service.cfn.yml                                                                    \
-                --parameter-overrides                                                                                      \
-                    Universe=${{ inputs.Universe }}                                                                          \
-                    Image="549050352176.dkr.ecr.us-east-1.amazonaws.com/emodb/emoji-test: ${{ inputs.Version }}"             \
-                    InternalTargetGroup=${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb:InternalTargetGroup \
-                    DesiredContainerCount=1                                                                                  \
+            aws cloudformation deploy                                                                                         \
+                --stack-name "${{ inputs.Universe }}-emoji-app${{ inputs.DnsSuffix }}"                                        \
+                --template-file ops/cfn/service.cfn.yml                                                                       \
+                --parameter-overrides                                                                                         \
+                    Universe=${{ inputs.Universe }}                                                                           \
+                    Image="549050352176.dkr.ecr.us-east-1.amazonaws.com/emodb/emoji: ${{ inputs.Version }}"                   \
+                    InternalTargetGroup=${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb:InternalTargetGroup  \
+                    DesiredContainerCount=1                                                                                   \
                 --capabilities CAPABILITY_IAM                                                                              \
                 --no-fail-on-empty-changeset                                                                               \
                 --tags                                                                                                     \
-                    bv:nexus:team=$(python ./EmojiLib.py getTags "team")                                                                         \
-                    bv:nexus:vpc=${{env.EnvTag}}                                                                       \
-                    bv:system=emodb                                                                                          \
-                    bv:nexus:service=$(python ./EmojiLib.py getTags "service")                                                                                \
-                    bv:nexus:role=app                                                                                        \
-                    bv:nexus:owner=$(python ./EmojiLib.py getTags "team")                                                                    \
-                    bv:nexus:access=none                                                                                     \
-                    bv:nexus:costcenter=$(python ./EmojiLib.py getTags "team")                                                                  \
-                    bv:nexus:datatype=$(python ./EmojiLib.py getTags "datatype")                                                                    \
-                    bv:nexus:env="${{env.EnvTag}}      "                                                                        \
-                    universe="${{ inputs.Universe }}"                                                                        \
+                    bv:nexus:team=$(python ./EmojiLib.py getTags "team")                                                   \
+                    bv:nexus:vpc=${{env.EnvTag}}                                                                           \
+                    bv:system=emodb                                                                                        \
+                    bv:nexus:service=$(python ./EmojiLib.py getTags "service")                                             \
+                    bv:nexus:role=app                                                                                      \
+                    bv:nexus:owner=$(python ./EmojiLib.py getTags "team")                                                  \
+                    bv:nexus:access=none                                                                                   \
+                    bv:nexus:costcenter=$(python ./EmojiLib.py getTags "team")                                             \
+                    bv:nexus:datatype=$(python ./EmojiLib.py getTags "datatype")                                           \
+                    bv:nexus:env="${{env.EnvTag}}      "                                                                   \
+                    universe="${{ inputs.Universe }}"                                                                      \
                 --region ${{ inputs.AWS_REGION }}
 
       - name: Alert to slack

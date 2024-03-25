@@ -64,7 +64,7 @@ jobs:
             role-session-name: emojiReleaseSession
             aws-region: ${{ inputs.AWS_REGION }}
 
-      - name: Release
+      - name: Maven Release
         run: |
             mvn compile -e -Dresume=false                         \
             -DreleaseProfiles=docker                              \

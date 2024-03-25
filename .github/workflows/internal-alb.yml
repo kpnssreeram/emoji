@@ -51,25 +51,25 @@ jobs:
             export AWS_RETRY_MODE="standard"
             export AWS_MAX_ATTEMPTS=15
 
-            aws cloudformation deploy                                   \
-            --stack-name ${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb-test   \
-            --template-file cd ops/cfn/internal-alb.cfn.yml              \
-            --parameter-overrides                                     \
-                Universe=${{ inputs.Universe }}                                    \
-                DnsSuffix=${{ inputs.DnsSuffix }}                                \
-            --no-fail-on-empty-changeset                              \
-            --tags                                                    \
-                bv:nexus:team=$(python ./EmojiLib.py getTags "team")                                 \
-                bv:nexus:vpc=${{env.EnvTag}}                                  \
-                bv:system=emodb                                         \
-                bv:nexus:service=$(python ./EmojiLib.py getTags "service")                                \
-                bv:nexus:role="internal-elb"                            \
-                bv:nexus:owner=$(python ./EmojiLib.py getTags "team")                                   \
-                bv:nexus:access=none                                    \
-                bv:nexus:costcenter=$(python ./EmojiLib.py getTags "team")                              \
-                bv:nexus:datatype=$(python ./EmojiLib.py getTags "datatype")                        \
-                bv:nexus:env=${{env.EnvTag}}                                        \
-                universe=${{inputs.Universe}}                                   \
+            aws cloudformation deploy                                                            \
+            --stack-name ${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb        \
+            --template-file ops/cfn/internal-alb.cfn.yml                                         \
+            --parameter-overrides                                                                \
+                Universe=${{ inputs.Universe }}                                                  \
+                DnsSuffix=${{ inputs.DnsSuffix }}                                                \
+            --no-fail-on-empty-changeset                                                         \
+            --tags                                                                               \
+                bv:nexus:team=$(python ./EmojiLib.py getTags "team")                             \
+                bv:nexus:vpc=${{env.EnvTag}}                                                     \
+                bv:system=emodb                                                                  \
+                bv:nexus:service=$(python ./EmojiLib.py getTags "service")                       \
+                bv:nexus:role="internal-elb"                                                     \
+                bv:nexus:owner=$(python ./EmojiLib.py getTags "team")                            \
+                bv:nexus:access=none                                                             \
+                bv:nexus:costcenter=$(python ./EmojiLib.py getTags "team")                       \
+                bv:nexus:datatype=$(python ./EmojiLib.py getTags "datatype")                     \
+                bv:nexus:env=${{env.EnvTag}}                                                     \
+                universe=${{inputs.Universe}}                                                    \
             --region ${{inputs.AWS_REGION}}
 
       - name: Alert to slack
