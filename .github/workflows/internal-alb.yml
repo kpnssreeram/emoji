@@ -8,14 +8,6 @@ on:
                 type: choice
                 options: [ci, cert, anon, uat, bazaar]
                 required: true
-            ApiKey:
-                description: 'API Key value'
-                type: string
-                required: true
-            AccessToken:
-                description: 'Access Token value'
-                type: string
-                required: true
             AWS_REGION:
                 description: 'AWS region to deploy'
                 default: 'us-east-1'
@@ -78,8 +70,8 @@ jobs:
                 bv:nexus:access=none                                    \
                 bv:nexus:costcenter=$(python ./libscript/EmojiLib.py getTags "team")                              \
                 bv:nexus:datatype=$(python ./libscript/EmojiLib.py getTags "datatype")                        \
-                bv:nexus:env=${vpc}                                     \
-                universe=${{env.EnvTag}}                                   \
+                bv:nexus:env=${{env.EnvTag}}                                        \
+                universe=${{inputs.Universe}}                                   \
             --region ${{inputs.AWS_REGION}}
 
       - name: Alert to slack

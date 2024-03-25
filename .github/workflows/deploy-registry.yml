@@ -8,14 +8,6 @@ on:
                 type: choice
                 options: [ci, cert, anon, uat, bazaar]
                 required: true
-            ApiKey:
-                description: 'API Key value'
-                type: string
-                required: true
-            AccessToken:
-                description: 'Access Token value'
-                type: string
-                required: true
             AWS_REGION:
                 description: 'AWS region to deploy'
                 default: 'us-east-1'
@@ -44,8 +36,6 @@ jobs:
         run: |
             label=$(python ./libscript/EmojiLib.py getVpcByUniverse "${{inputs.Universe}}")
             account_id=$(python ./libscript/EmojiLib.py getAccountIdByUniverse "${{inputs.Universe}}")
-            echo "Account ID: $account_id"
-            echo "Deploy Label: $label"
             echo "EnvTag=$label" >> $GITHUB_ENV
             echo "AccId=$account_id" >> $GITHUB_ENV
     
@@ -53,7 +43,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
             role-to-assume: arn:aws:iam::${{env.AccId}}:role/emojigitrole
-            role-session-name: emojiSecretsSession
+            role-session-name: emojiDeployDockerSession
             aws-region: ${{ inputs.AWS_REGION }}
 
       - name: Deploy registry
