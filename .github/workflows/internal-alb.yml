@@ -34,7 +34,7 @@ jobs:
       - name: Checkout main repository
         uses: actions/checkout@v3
 
-      - name: Checkout repository with Library.py
+      - name: Checkout repository with library file
         uses: actions/checkout@v3
         with:
           repository: kpnssreeram/Library
