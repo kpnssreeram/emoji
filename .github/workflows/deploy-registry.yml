@@ -1,4 +1,4 @@
-name: Deploy Secrets
+name: Deploy registry
 on: 
     workflow_dispatch:
         inputs:
@@ -28,7 +28,7 @@ permissions:
     actions: read
                   
 jobs:
-  deploy-secrets:
+  deploy-docker-registry:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main repository
@@ -40,7 +40,7 @@ jobs:
           repository: kpnssreeram/Library
           path: libscript
 
-      - name: Fetch data (deploy label)
+      - name: Fetch data 
         run: |
             label=$(python ./libscript/EmojiLib.py getVpcByUniverse "${{inputs.Universe}}")
             account_id=$(python ./libscript/EmojiLib.py getAccountIdByUniverse "${{inputs.Universe}}")
@@ -56,26 +56,26 @@ jobs:
             role-session-name: emojiSecretsSession
             aws-region: ${{ inputs.AWS_REGION }}
 
-      - name: Deploy Secrets
+      - name: Deploy registry
         run: |
             aws cloudformation deploy                                               \
             --stack-name emoji-docker-registry-test                                 \
-            --template-file ops/cfn/docker-registry.cfn.yml                         \
+            --template-file cd ops/cfn/docker-registry.cfn.yml                         \
             --parameter-overrides                                                   \
-            ECRRepositoryName=emodb/emoji-test                                      \
-            --no-fail-on-empty-changeset                                            \
+                ECRRepositoryName=emodb/emoji-test                                      \
+                --no-fail-on-empty-changeset                                            \
             --tags                                                                  \
-            bv:nexus:team=$(python ./libscript/EmojiLib.py getTags "team")          \
-            bv:nexus:vpc=${{env.EnvTag}}                                            \
-            bv:system=emodb                                                         \
-            bv:nexus:service=$(python ./libscript/EmojiLib.py getTags "service")    \
-            bv:nexus:role=docker-registry                                           \
-            bv:nexus:owner=$(python ./libscript/EmojiLib.py getTags "team")         \
-            bv:nexus:access=none                                                    \
-            bv:nexus:costcenter=$(python ./libscript/EmojiLib.py getTags "team")    \
-            bv:nexus:datatype=intellectualproperty                                  \
-            bv:nexus:env="${{env.EnvTag}} "                                         \
-            --region ${region}
+                bv:nexus:team=$(python ./libscript/EmojiLib.py getTags "team")          \
+                bv:nexus:vpc=${{env.EnvTag}}                                            \
+                bv:system=emodb                                                         \
+                bv:nexus:service=$(python ./libscript/EmojiLib.py getTags "service")    \
+                bv:nexus:role=docker-registry                                           \
+                bv:nexus:owner=$(python ./libscript/EmojiLib.py getTags "team")         \
+                bv:nexus:access=none                                                    \
+                bv:nexus:costcenter=$(python ./libscript/EmojiLib.py getTags "team")    \
+                bv:nexus:datatype=intellectualproperty                                  \
+                bv:nexus:env=${{env.EnvTag}}                                         \
+            --region ${{inputs.AWS_REGION}}
 
       - name: Alert to slack
         uses: 8398a7/action-slack@v3

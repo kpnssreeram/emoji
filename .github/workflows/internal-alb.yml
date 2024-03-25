@@ -1,4 +1,4 @@
-name: Deploy Secrets
+name: Deploy internal-alb
 on: 
     workflow_dispatch:
         inputs:
@@ -40,7 +40,7 @@ jobs:
           repository: kpnssreeram/Library
           path: libscript
 
-      - name: Fetch data
+      - name: Fetch data (deploy label)
         run: |
             label=$(python ./libscript/EmojiLib.py getVpcByUniverse "${{inputs.Universe}}")
             account_id=$(python ./libscript/EmojiLib.py getAccountIdByUniverse "${{inputs.Universe}}")
@@ -48,20 +48,6 @@ jobs:
             echo "Deploy Label: $label"
             echo "EnvTag=$label" >> $GITHUB_ENV
             echo "AccId=$account_id" >> $GITHUB_ENV
-
-      - name: Install jq
-        run: |
-              sudo apt-get update
-              sudo apt-get install jq
-    
-      - name: Mask ApiKey and AccessToken
-        run: |
-            API_PASSWORD=$(jq -r '.inputs.ApiKey' $GITHUB_EVENT_PATH)
-            ACCESS_TOKEN=$(jq -r '.inputs.AccessToken' $GITHUB_EVENT_PATH)
-            echo ::add-mask::$API_PASSWORD
-            echo ::add-mask::$ACCESS_TOKEN
-            echo "API_PASSWORD=$API_PASSWORD" >> $GITHUB_ENV
-            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
     
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -70,27 +56,31 @@ jobs:
             role-session-name: emojiSecretsSession
             aws-region: ${{ inputs.AWS_REGION }}
 
-      - name: Deploy Secrets
+      - name: Deploy internal-alb
         run: |
-            aws cloudformation deploy                        \
-              --stack-name ${{ inputs.Universe }}-emoji-test \
-              --template-file cd ops/cfn/secrets.cfn.yml     \
-              --region ${{ inputs.AWS_REGION }}              \
-              --capabilities CAPABILITY_IAM                  \
-              --no-fail-on-empty-changeset                   \
-              --parameter-overrides                          \
-                Universe=${{ inputs.Universe }}              \
-                AccessToken=${{ env.ACCESS_TOKEN }}          \
-                ApiKey=${{ env.API_PASSWORD }}               \
-              --tags                                         \
-                bv:nexus:team=$(python ./libscript/EmojiLib.py getTags "team")          \
-                bv:nexus:vpc=${{env.EnvTag}}                                            \
-                bv:system=emodb                                                         \
-                bv:nexus:service=$(python ./libscript/EmojiLib.py getTags "service")    \
-                bv:nexus:owner=$(python ./libscript/EmojiLib.py getTags "team")         \
-                bv:nexus:costcenter=$(python ./libscript/EmojiLib.py getTags "team")    \
-                bv:nexus:datatype=$(python ./libscript/EmojiLib.py getTags "datatype")  \
-                bv:nexus:env=${{env.EnvTag}}                                            \
+            export AWS_RETRY_MODE="standard"
+            export AWS_MAX_ATTEMPTS=15
+
+            aws cloudformation deploy                                   \
+            --stack-name ${{ inputs.Universe }}${{ inputs.DnsSuffix }}-emoji-internal-alb-test   \
+            --template-file cd ops/cfn/internal-alb.cfn.yml              \
+            --parameter-overrides                                     \
+                Universe=${{ inputs.Universe }}                                    \
+                DnsSuffix=${{ inputs.DnsSuffix }}                                \
+            --no-fail-on-empty-changeset                              \
+            --tags                                                    \
+                bv:nexus:team=$(python ./libscript/EmojiLib.py getTags "team")                                 \
+                bv:nexus:vpc=${{env.EnvTag}}                                  \
+                bv:system=emodb                                         \
+                bv:nexus:service=$(python ./libscript/EmojiLib.py getTags "service")                                \
+                bv:nexus:role="internal-elb"                            \
+                bv:nexus:owner=$(python ./libscript/EmojiLib.py getTags "team")                                   \
+                bv:nexus:access=none                                    \
+                bv:nexus:costcenter=$(python ./libscript/EmojiLib.py getTags "team")                              \
+                bv:nexus:datatype=$(python ./libscript/EmojiLib.py getTags "datatype")                        \
+                bv:nexus:env=${vpc}                                     \
+                universe=${{env.EnvTag}}                                   \
+            --region ${{inputs.AWS_REGION}}
 
       - name: Alert to slack
         uses: 8398a7/action-slack@v3
