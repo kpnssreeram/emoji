@@ -1,0 +1,86 @@
+name: emoji-release
+on: 
+    workflow_dispatch:
+        inputs:
+            Universe:
+                description: 'Universe to deploy'
+                default: 'ci'
+                type: choice
+                options: [ci, cert, anon, uat, bazaar]
+                required: true
+            ReleaseVersion:
+                description: 'Release version'
+                default: '0.53'
+                required: true
+            DevelopmentVersion:
+                description: 'Development version'
+                default: '0.54-SNAPSHOT'
+                required: true
+            AWS_REGION:
+                description: 'AWS region to deploy'
+                default: 'us-east-1'
+                type: choice
+                options: [us-east-1]
+
+permissions:
+    id-token: write
+    contents: read
+    actions: read
+                  
+jobs:
+  Emoji-release-lib:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v3
+
+      - name: Checkout repository with library file
+        uses: actions/checkout@v3
+        with:
+          repository: kpnssreeram/Library
+          path: libscript
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+            java-version: '11'
+            distribution: 'temurin'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4
+        with:
+            maven-version: '3.6.3'
+
+      - name: Fetch data 
+        run: |
+            label=$(python ./libscript/EmojiLib.py getVpcByUniverse "${{inputs.Universe}}")
+            account_id=$(python ./libscript/EmojiLib.py getAccountIdByUniverse "${{inputs.Universe}}")
+            echo "EnvTag=$label" >> $GITHUB_ENV
+            echo "AccId=$account_id" >> $GITHUB_ENV
+    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            role-to-assume: arn:aws:iam::${{env.AccId}}:role/emojigitrole
+            role-session-name: emojiReleaseSession
+            aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: Release
+        run: |
+            mvn compile -e -Dresume=false                         \
+            -DreleaseProfiles=docker                              \
+            -DreleaseVersion=${{ inputs.ReleaseVersion }}         \
+            -DdevelopmentVersion=${{ inputs.DevelopmentVersion }} \
+            -Darguments="-DskipTests                              \
+            -DskipITs                                             \
+            -Ddependency-check.skip=true                          \
+            -Dmaven.javadoc.skip=true"                            \
+            release:clean release:prepare release:perform
+
+      - name: Alert to slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ always() }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,job,workflow
+          author_name: The workflow at ${{ github.repository }} on branch ${{ github.ref_name }} is ${{ job.status }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -46,8 +46,6 @@ jobs:
         run: |
             label=$(python ./libscript/EmojiLib.py getVpcByUniverse "${{inputs.Universe}}")
             account_id=$(python ./libscript/EmojiLib.py getAccountIdByUniverse "${{inputs.Universe}}")
-            echo "Account ID: $account_id"
-            echo "Deploy Label: $label"
             echo "EnvTag=$label" >> $GITHUB_ENV
             echo "AccId=$account_id" >> $GITHUB_ENV
     
