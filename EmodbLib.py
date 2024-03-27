@@ -27,6 +27,8 @@ def getTags(tag_type):
     return tags.get(tag_type, 'default')
 
 
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 3:
