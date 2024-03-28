@@ -1,0 +1,83 @@
+name: EMRServiceRole
+on: 
+    workflow_dispatch:
+        inputs:
+            Universe:
+                description: 'Universe to deploy'
+                default: 'ci'
+                type: choice
+                options: [ci, cert, anon, uat, bazaar]
+                required: true
+            StackName:
+                description: 'Provide stack name'
+                default: 'emodb-spark-emr-managed-shared-security-groups'
+                type: string
+                required: true
+            AWS_REGION:
+                description: 'AWS region to deploy'
+                default: 'us-east-1'
+                type: choice
+                options: [us-east-1]
+
+permissions:
+    id-token: write
+    contents: read
+    actions: read
+                  
+jobs:
+  emr-serviceRole-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+
+      - name: Checkout repository with library file
+        uses: actions/checkout@v4
+        with:
+          repository: bvengineering/ActionsLibraryHub
+          path: LibraryHub
+          token: ${{secrets.TOKEN}}
+
+      - name: Fetch data
+        run: |
+            label=$(python ./LibraryHub/EmodbLib.py getVpcByUniverse "${{inputs.Universe}}")
+            account_id=$(python ./LibraryHub/EmodbLib.py getAccountIdByUniverse "${{inputs.Universe}}")
+            echo "EnvTag=$label" >> $GITHUB_ENV
+            echo "AccId=$account_id" >> $GITHUB_ENV
+    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            role-to-assume: arn:aws:iam::${{env.AccId}}:role/deployCFNResource
+            role-session-name: emojiSecretsSession
+            aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: Run CFN Deploy
+        run: |
+            aws cloudformation deploy                                                      \
+            --stack-name ${{inputs.StackName}}                                             \
+            --template-file ops/spark-emr-service-role.cfn.yaml                            \
+            --tags                                                                         \
+                bv:nexus:team=$(python ./LibraryHub/EmodbLib.py getTags "team")            \
+                bv:nexus:vpc=${{env.EnvTag}}                                               \
+                bv:system=emodb                                                            \
+                bv:nexus:service=spark                                                     \
+                bv:nexus:role= iam-role                                                    \
+                bv:nexus:owner=$(python ./LibraryHub/EmodbLib.py getTags "team")           \
+                bv:nexus:access=none                                                       \
+                bv:nexus:costcenter=$(python ./LibraryHub/EmodbLib.py getTags "team")      \
+                bv:nexus:datatype=$(python ./LibraryHub/EmodbLib.py getTags "datatype")    \
+                bv:nexus:env=${{env.EnvTag}}                                               \
+            --region ${{inputs.AWS_REGION}}                                                \
+            --no-fail-on-empty-changeset  
+          
+
+      - name: Alert to slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ always() }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,job,workflow
+          author_name: The workflow at ${{ github.repository }} on branch ${{ github.ref_name }} is ${{ job.status }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
